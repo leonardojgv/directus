@@ -21,22 +21,22 @@
 # 'Proxy', 'Intl'
 
 avatar: Avatar
-default_provider: Defecto
+default_provider: Por defecto
 published: Publicado
 draft: Borrador
 archived: Archivado
 modules: Módulos
 module_bar: Barra de módulos
-tile_size: Tamaño del azulejo
-edit_field: Editar campo
+tile_size: Tamaño del mosaico
+edit_field: Editar Campo
 conditions: Condiciones
-maps: Maps
+maps: Mapas
 item_creation: Creación de artículos
-item_revision: Revisión del artículo
-enter_a_name: Ingresa un nombre...
-duplicate_field: Campo duplicado
-half_width: Medio ancho
-full_width: Ancho completo
+item_revision: Revisión de Elemento
+enter_a_name: Introduce un Nombre...
+duplicate_field: Duplicar Campo
+half_width: Anchura 50%
+full_width: Ancho Completo
 group: Grupo
 and: Y
 or: O
@@ -48,20 +48,20 @@ role_name: Nombre de rol
 branch: Rama
 leaf: Hoja
 indeterminate: Indeterminado
-edit_collection: Editar colección
+edit_collection: Editar Colección
 exclusive: Exclusivo
-children: Niños
-db_only_click_to_configure: 'Solo base de datos: haga clic para configurar'
-show_archived_items: Mostrar elementos archivados
-edited: Valor editado
+children: Subsecciones
+db_only_click_to_configure: 'Solo Base de Datos: Clic para Configurar '
+show_archived_items: Mostrar Elementos Archivados
+edited: Valor Editado
 required: Requerido
-required_for_app_access: Requerido para el acceso a la aplicación
-requires_value: Requiere valor
-create_preset: Crear preajuste
-create_panel: Crear panel
-create_role: Crear rol
-create_user: Crear usuario
-delete_panel: Eliminar panel
+required_for_app_access: Necesario para el acceso a App
+requires_value: Valor obligatorio
+create_preset: Crear Predefinido
+create_panel: Crear Panel
+create_role: Crear Rol
+create_user: Crear Usuario
+delete_panel: Eliminar Panel
 create_webhook: Crear Webhook
 invite_users: Invitar usuarios
 invite: Invitación
@@ -129,14 +129,14 @@ validationError:
   required: Se requiere valor
   unique: El valor tiene que ser único
   regex: El valor no tiene el formato correcto
-all_access: Acceso total
-no_access: Sin acceso
-use_custom: Usar personalizado
-nullable: Anulable
-allow_null_value: Permitir valor NULO
-allow_multiple: Permitir varios
-allow_multiple_to_be_open: Permitir que se abran varios
-enter_value_to_replace_nulls: Ingrese un nuevo valor para reemplazar cualquier valor NULL que se encuentre actualmente en este campo.
+all_access: Todos los accesos
+no_access: Sin Acceso
+use_custom: Personalizar
+nullable: Acepta valores nulos
+allow_null_value: Permitir valor NULL
+allow_multiple: Permitir Múltiples
+allow_multiple_to_be_open: Permitir que se abran múltiples
+enter_value_to_replace_nulls: Por favor, introduzca un nuevo valor para reemplazar cualquier valor NULO actualmente dentro de este campo.
 field_standard: Estándar
 field_presentation: Presentación y alias
 field_file: Fila india
@@ -146,46 +146,46 @@ field_m2a: M2A Relación
 field_o2m: O2M Relación
 field_m2m: M2M Relación
 field_translations: Traducciones
-field_group: Grupo de campo
-item_permissions: Permisos de artículos
-field_permissions: Permisos de campo
-field_validation: Validación de campo
-field_presets: Ajustes preestablecidos de campo
-permissions_for_role: 'Elementos que el rol de {role} puede {action}.'
-fields_for_role: 'Campos el rol {role} puede {action}.'
-validation_for_role: 'El campo {action} gobierna el rol {role} que debe obedecer.'
-presets_for_role: 'Valores de campo predeterminados para el rol {role}.'
-presentation_and_aliases: Presentación y alias
-revision_post_create: Así es como se veía este elemento cuando se creó.
-revision_post_update: Así es como se veía este artículo después de la actualización.
+field_group: Grupo de campos
+item_permissions: Permisos de Elemento
+field_permissions: Permisos de Campo
+field_validation: Validación de Campo
+field_presets: Predefinidos para Campo
+permissions_for_role: 'Elementos que el Rol {role} puede {action}.'
+fields_for_role: 'Campos que el Rol {role} puede {action}.'
+validation_for_role: 'Reglas de campo al {action} que el Rol {role} tiene que obedecer.'
+presets_for_role: 'Valores por defecto del Campo para el Rol {role}.'
+presentation_and_aliases: Presentación y Alias
+revision_post_create: Este es el aspecto de este elemento cuando fue creado.
+revision_post_update: Así se vería el elemento después de la actualización.
 changes_made: A continuación se muestran los cambios específicos realizados en esta revisión.
 no_relational_data: Tenga en cuenta que los datos relacionales no se incluyen aquí.
-hide_field_on_detail: Ocultar campo en detalle
-show_field_on_detail: Mostrar campo en detalle
-delete_field: Eliminar campo
-fields_and_layout: Campos y diseño
-field_create_success: 'Campo creado: "{field}"'
-field_update_success: 'Campo actualizado: "{field}"'
-duplicate_where_to: ¿Dónde le gustaría duplicar este campo?
+hide_field_on_detail: Ocultar campo en el Detalle
+show_field_on_detail: Mostrar campo en el Detalle
+delete_field: Eliminar Campo
+fields_and_layout: Campos y Diseño
+field_create_success: 'Campo Creado: "{field}"'
+field_update_success: 'Campo Actualizado: "{field}"'
+duplicate_where_to: '¿A dónde le gustaría duplicar este campo?'
 language: Idioma
 aggregate_function: Función agregada
 aggregate_precision: Precisión agregada
 group_aggregation: Agregación de grupo
 group_precision: Precisión de grupo
 global: Global
-admins_have_all_permissions: Los administradores tienen todos los permisos
-camera: Camera
+admins_have_all_permissions: Los Administradores tienen todos los permisos
+camera: Cámara
 show_zero: Mostrar cero
-sum: Sum
-sum_distinct: Suma distinta
-avg: Promedio
-avg_distinct: Distinto promedio
+sum: Suma
+sum_distinct: Sumar Diferentes
+avg: Media
+avg_distinct: Media de elementos distintos
 count: Contar
-count_distinct: Cuenta distinta
+count_distinct: Recuento de elementos distintos
 min: Min
-max: Max
-exposure: Exposure
-shutter: Shutter
+max: Máx
+exposure: Exposición
+shutter: Obturación
 iso: ISO
 focal_length: Distancia Focal
 schema_setup_key: Nombre de columna de este campo de la base de datos y clave API
@@ -201,7 +201,7 @@ alias: Alias
 bigInteger: Número Entero (Grande)
 boolean: Booleano
 date: Fecha
-date_range: Date Range
+date_range: Rango de fechas
 datetime: Fecha y Hora
 precision: Precisión
 decimal: Decimal
@@ -241,8 +241,8 @@ add_m2m_to_collection: 'Agregar Muchos-A-Muchos a "{collection}"'
 choose_a_type: Elegir un Tipo...
 determined_by_relationship: Determinado por la Relación
 add_note: Añadir una nota útil para los usuarios...
-add_link: Add Link
-custom_link: Custom Link
+add_link: Agregar Enlace
+custom_link: Enlance Personalizado
 default_value: Valor por Defecto
 standard_field: Campo Estándar
 single_file: Un Archivo
@@ -272,7 +272,7 @@ raw_value: Valor Plano
 edit_raw_value: Editar Valor Plano
 enter_raw_value: Ingresar valor plano...
 clear_value: Limpiar valor
-clear_changes: Clear Changes
+clear_changes: Borrar Cambios
 reset_to_default: Restablecer ajustes
 undo_changes: Deshacer cambios
 notifications: Notificaciones
@@ -292,7 +292,7 @@ revision_delta_reverted: Revertido
 revision_delta_other: Revisión
 revision_delta_by: '{date} por {user}'
 private_user: Usuario Privado
-creation_preview: Creation Preview
+creation_preview: Vista previa de creación
 revision_preview: Vista Previa de Revisión
 updates_made: Actualizaciones Realizadas
 leave_comment: Deja un comentario...
@@ -416,9 +416,9 @@ no_files_copy: Aquí no hay archivos.
 user_count: 'Sin Usuarios | Un Usuario | {count} Usuarios'
 no_users_copy: No hay usuarios con este Rol aún.
 webhooks_count: 'Sin Webhooks | Un Webhook | {count} Webhooks'
-no_webhooks_copy: No webhooks have been configured yet. Get started by creating one below.
+no_webhooks_copy: Aún no se ha configurado ningún webhooks. Comienza creando uno a continuación.
 all_items: Todos los Elementos
-any: Any
+any: Cualquiera
 csv: CSV
 no_collections: Sin Colecciones
 create_collection: Crear colección
@@ -428,19 +428,19 @@ relationship_not_setup: La relación no se ha configurado correctamente
 display_template_not_setup: La opción de plantilla de Presentación está mal configurada
 collection_field_not_setup: La opción del campo de colección está mal configurada
 select_a_collection: Seleccionar una Colección
-select_a_field: Seleccione un campo
+select_a_field: Selecciona un campo
 active: Activo
 move_to: Mover a...
 copy: Copiar
 copy_to: Copiar a...
-no_other_dashboards_copy: Aún no tiene otros paneles.
-inactive: Inactive
+no_other_dashboards_copy: Aún no tienes un Panel.
+inactive: Inactivo
 users: Usuarios
 activity: Actividad
 webhooks: Webhooks
 decimals: Decimales
-value_decimals: Decimales de valor
-min_value: Valor mínimo
+value_decimals: Valor Decimal
+min_value: Valor Mínimo
 max_value: Valor máximo
 automatic: Automático
 field_width: Ancho de Campo
@@ -493,7 +493,7 @@ errors:
   UNPROCESSABLE_ENTITY: Entidad no procesable
   INTERNAL_SERVER_ERROR: Error Inesperado
   NOT_NULL_VIOLATION: El valor no puede ser nulo
-  ILLEGAL_ASSET_TRANSFORMATION: La fuente de la imagen es demasiado grande para obtener una vista previa
+  ILLEGAL_ASSET_TRANSFORMATION: Fuente de imagen demasiado grande para previsualizar
   UNKNOWN: Error Inesperado
 security: Seguridad
 value_hashed: Valor Hasheado de Manera Segura
@@ -510,7 +510,7 @@ no_app_access_copy: Este usuario no tiene permitido usar la app administrativa.
 password_reset_sent: Le hemos enviado un enlace seguro para restablecer su contraseña
 password_reset_successful: Contraseña restablecida exitósamente
 back: Volver
-filter: Filtrar
+filter: Filtro
 editing_image: Editar Imagen
 square: Cuadrado
 free: Libre
@@ -533,7 +533,7 @@ visible_collections: Colecciones Visibles
 hidden_collections: Colecciones Ocultas
 show_hidden_collections: Mostrar colecciones ocultas
 hide_hidden_collections: Ocultar colecciones ocultas
-show_header: Show Header
+show_header: Mostrar encabezado
 unmanaged_collections: Colecciones No Configuradas
 system_collections: Colecciones del Sistema
 placeholder: Valor de Ejemplo
@@ -550,7 +550,7 @@ circle: Círculo
 empty_item: Elemento Vacío
 log_in_with: 'Iniciar Sesión con {provider}'
 conditional_styles: Estilos condicionales
-advanced_settings: Ajustes avanzados
+advanced_settings: Configuración Avanzada
 advanced_filter: Filtro Avanzado
 delete_advanced_filter: Borrar filtro
 change_advanced_filter_operator: Cambiar operador
@@ -1139,7 +1139,7 @@ report_error: Reportar Error
 start: Iniciar
 interfaces:
   filter:
-    name: Filtrar
+    name: Filtro
     description: Configure un objeto de filtro.
     add_filter: Agregar Filtro
     add_group: Y / O grupo
@@ -1517,7 +1517,6 @@ layouts:
     search_this_area: Buscar en esta zona
     clear_data_filter: Borrar filtro de datos
     clear_location_filter: Borrar filtro de ubicación
-
 panels:
   metric:
     name: Métrica
