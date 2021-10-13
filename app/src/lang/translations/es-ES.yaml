@@ -1,154 +1,191 @@
----
 ## Be aware:
-#Due to the way this is imported, JavaScript reserved words, including "delete", "private",
-#"void", etc are stripped out. See
-#https://github.com/rollup/plugins/blob/8748b8cd3bbab3c5ac6190556930219f19060e63/packages/pluginutils/src/makeLegalIdentifier.ts#L4
-#and
-#https://github.com/rollup/plugins/blob/8748b8cd3bbab3c5ac6190556930219f19060e63/packages/yaml/src/index.js#L45
-#Illegal words:
-#'break', 'case', 'class', 'catch', 'const', 'continue', 'debugger', 'default', 'delete', 'do',
-#'else', 'export', 'extends', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof',
-#'let', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void',
-#'while', 'with', 'yield', 'enum', 'await', 'implements', 'package', 'protected', 'static',
-#'interface', 'private', 'public', 'arguments', 'Infinity', 'NaN', 'undefined', 'null', 'true',
-#'false', 'eval', 'uneval', 'isFinite', 'isNaN', 'parseFloat', 'parseInt', 'decodeURI',
-#'decodeURIComponent', 'encodeURI', 'encodeURIComponent', 'escape', 'unescape', 'Object',
-#'Function', 'Boolean', 'Symbol', 'Error', 'EvalError', 'InternalError', 'RangeError',
-#'ReferenceError', 'SyntaxError', 'TypeError', 'URIError', 'Number', 'Math', 'Date', 'String',
-#'RegExp', 'Array', 'Int8Array', 'Uint8Array', 'Uint8ClampedArray', 'Int16Array', 'Uint16Array',
-#'Int32Array', 'Uint32Array', 'Float32Array', 'Float64Array', 'Map', 'Set', 'WeakMap', 'WeakSet',
-#'SIMD', 'ArrayBuffer', 'DataView', 'JSON', 'Promise', 'Generator', 'GeneratorFunction', 'Reflect',
-#'Proxy', 'Intl'
+#  Due to the way this is imported, JavaScript reserved words, including "delete", "private",
+# "void", etc are stripped out. See
+# https://github.com/rollup/plugins/blob/8748b8cd3bbab3c5ac6190556930219f19060e63/packages/pluginutils/src/makeLegalIdentifier.ts#L4
+# and
+# https://github.com/rollup/plugins/blob/8748b8cd3bbab3c5ac6190556930219f19060e63/packages/yaml/src/index.js#L45
+#
+# Illegal words:
+# 'break', 'case', 'class', 'catch', 'const', 'continue', 'debugger', 'default', 'delete', 'do',
+# 'else', 'export', 'extends', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof',
+# 'let', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void',
+# 'while', 'with', 'yield', 'enum', 'await', 'implements', 'package', 'protected', 'static',
+# 'interface', 'private', 'public', 'arguments', 'Infinity', 'NaN', 'undefined', 'null', 'true',
+# 'false', 'eval', 'uneval', 'isFinite', 'isNaN', 'parseFloat', 'parseInt', 'decodeURI',
+# 'decodeURIComponent', 'encodeURI', 'encodeURIComponent', 'escape', 'unescape', 'Object',
+# 'Function', 'Boolean', 'Symbol', 'Error', 'EvalError', 'InternalError', 'RangeError',
+# 'ReferenceError', 'SyntaxError', 'TypeError', 'URIError', 'Number', 'Math', 'Date', 'String',
+# 'RegExp', 'Array', 'Int8Array', 'Uint8Array', 'Uint8ClampedArray', 'Int16Array', 'Uint16Array',
+# 'Int32Array', 'Uint32Array', 'Float32Array', 'Float64Array', 'Map', 'Set', 'WeakMap', 'WeakSet',
+# 'SIMD', 'ArrayBuffer', 'DataView', 'JSON', 'Promise', 'Generator', 'GeneratorFunction', 'Reflect',
+# 'Proxy', 'Intl'
+
 avatar: Avatar
-default_provider: Por defecto
-edit_field: Editar Campo
+default_provider: Defecto
+published: Publicado
+draft: Borrador
+archived: Archivado
+modules: Módulos
+module_bar: Barra de módulos
+tile_size: Tamaño del azulejo
+edit_field: Editar campo
 conditions: Condiciones
-item_revision: Revisión de Elemento
-duplicate_field: Duplicar Campo
-half_width: Anchura 50%
-full_width: Ancho Completo
+maps: Maps
+item_creation: Creación de artículos
+item_revision: Revisión del artículo
+enter_a_name: Ingresa un nombre...
+duplicate_field: Campo duplicado
+half_width: Medio ancho
+full_width: Ancho completo
 group: Grupo
-and: "Y"
+and: Y
 or: O
-fill_width: Llenar Ancho
-field_name_translations: 'Nombre de Campo: Traducciones'
-enter_password_to_enable_tfa: Introduzca la contraseña para habilitar la Autenticación de doble factor
-add_field: Agregar Campo
-role_name: Nombre del Rol
+fill_width: Ancho de relleno
+field_name_translations: Traducciones de nombres de campo
+enter_password_to_enable_tfa: Ingrese su contraseña para habilitar la autenticación de dos factores
+add_field: Agregue campo
+role_name: Nombre de rol
 branch: Rama
 leaf: Hoja
 indeterminate: Indeterminado
+edit_collection: Editar colección
 exclusive: Exclusivo
-db_only_click_to_configure: 'Solo Base de Datos: Clic para Configurar '
-show_archived_items: Mostrar Elementos Archivados
-edited: Valor Editado
+children: Niños
+db_only_click_to_configure: 'Solo base de datos: haga clic para configurar'
+show_archived_items: Mostrar elementos archivados
+edited: Valor editado
 required: Requerido
-required_for_app_access: Necesario para el acceso a App
-requires_value: Valor obligatorio
-create_preset: Crear Predefinido
-create_role: Crear Rol
-create_user: Crear Usuario
+required_for_app_access: Requerido para el acceso a la aplicación
+requires_value: Requiere valor
+create_preset: Crear preajuste
+create_panel: Crear panel
+create_role: Crear rol
+create_user: Crear usuario
+delete_panel: Eliminar panel
 create_webhook: Crear Webhook
-invite_users: Invitar Usuarios
-invite: Invitar
-email_already_invited: El correo electrónico "{email}" ya ha sido invitado
-emails: Correos Electrónicos
-connection_excellent: Excelente Conexión
-connection_good: Buena Conexión
-connection_fair: Conexión Suficiente
-connection_poor: Conexión Pobre
-primary: Principal
-rename_folder: Renombrar Directorio
-delete_folder: Eliminar Directorio
+invite_users: Invitar usuarios
+invite: Invitación
+email_already_invited: Ya se ha invitado al correo electrónico "{email}"
+emails: Emails
+connection_excellent: Excelente conexión
+connection_good: Buena conexion
+connection_fair: Conexión justa
+connection_poor: Conexión pobre
+primary: Primario
+rename_folder: Renombrar carpeta
+delete_folder: Eliminar carpeta
 prefix: Prefijo
 suffix: Sufijo
-reset_bookmark: Restablecer Marcador
-rename_bookmark: Renombrar Marcador
-update_bookmark: Actualizar Marcador
-delete_bookmark: Eliminar Marcador
+reset_bookmark: Restablecer marcador
+rename_bookmark: Cambiar nombre de marcador
+update_bookmark: Actualizar marcador
+delete_bookmark: Eliminar marcador
 delete_bookmark_copy: >-
-  ¿Está seguro que desea eliminar el Marcador "{bookmark}"? Esta acción no es reversible.
+  ¿Está seguro de que desea eliminar el marcador "{bookmark}"? Esta acción no se puede deshacer.
 logoutReason:
-  SIGN_OUT: Sesión terminada
+  SIGN_OUT: Cerró sesión
   SESSION_EXPIRED: Sesión expirada
 public_label: Público
-public_description: Controla qué datos de la API estarán disponibles sin requerir autenticarse
-not_allowed: No Permitido
+public_description: Controla qué datos de API están disponibles sin autenticarse.
+not_allowed: No permitido
 directus_version: Versión de Directus
-node_version: Versión de Node
-node_uptime: Tiempo de actividad de Node
+node_version: Versión de nodo
+node_uptime: Tiempo de actividad del nodo
 os_type: Tipo de SO
-os_version: Versión de SO
+os_version: Versión del sistema operativo
 os_uptime: Tiempo de actividad del SO
-os_totalmem: Memoria del SO
-archive: Archivar
-archive_confirm: '¿Está seguro que desea archivar este elemento?'
+os_totalmem: Memoria del sistema operativo
+archive: Archivo
+archive_confirm: ¿Está seguro de que desea archivar este elemento?
 archive_confirm_count: >-
-  Sin Elementos Seleccionados | ¿Realmente desea archivar este elemento? | ¿Realmente desea archivar estos {count} elementos?
-reset_system_permissions_to: 'Restablecer Permisos del Sistema:'
-reset_system_permissions_copy: Esta acción sobrescribirá cualquier permiso personalizado que haya aplicado a las colecciones del sistema. ¿Está seguro?
-the_following_are_minimum_permissions: Los siguientes son permisos mínimos requeridos cuando "Acceso a App" está habilitado. Puede extender permisos más allá de esto, pero no más abajo.
-app_access_minimum: Mínimo acceso a App
+  Ningún artículo seleccionado | ¿Está seguro de que desea archivar este elemento? | ¿Está seguro de que desea archivar estos {count} elementos?
+reset_system_permissions_to: 'Restablecer los permisos del sistema para:'
+reset_system_permissions_copy:
+  Esta acción sobrescribirá cualquier permiso personalizado que pueda haber aplicado a las colecciones del sistema. ¿Está seguro?
+the_following_are_minimum_permissions:
+  Los siguientes son los permisos mínimos requeridos cuando el "Acceso a la aplicación" está habilitado. Puede ampliar los permisos más allá de esto,
+  pero no por debajo.
+app_access_minimum: Acceso mínimo a la aplicación
 recommended_defaults: Valores predeterminados recomendados
 unarchive: Desarchivar
-unarchive_confirm: '¿Realmente desea desarchivar este elemento?'
-nested_files_folders_will_be_moved: Los archivos y directorios anidados serán movidos a un nivel superior.
-unknown_validation_errors: 'Ocurrieron errores de validación para los siguientes campos ocultos:'
+unarchive_confirm: ¿Está seguro de que desea desarchivar este elemento?
+nested_files_folders_will_be_moved: Los archivos y carpetas anidados se moverán un nivel hacia arriba.
+unknown_validation_errors: 'Hubo errores de validación para los siguientes campos ocultos:'
 validationError:
   eq: El valor tiene que ser {valid}
   neq: El valor no puede ser {invalid}
-  in: 'El valor tiene que ser uno de estos: {valid}'
-  nin: 'El valor no puede ser uno de estos: {invalid}'
+  in: El valor tiene que ser una de {valid}
+  nin: El valor no puede ser uno de {invalid}
   contains: El valor tiene que contener {substring}
   ncontains: El valor no puede contener {substring}
-  gt: El valor tiene que ser mayor a {valid}
-  gte: El valor tiene que ser mayor o igual a {valid}
-  lt: El valor tiene que ser menor a {valid}
+  gt: El valor tiene que ser mayor que {valid}
+  gte: El valor debe ser mayor o igual que {valid}
+  lt: El valor tiene que ser menor que {valid}
   lte: El valor tiene que ser menor o igual a {valid}
-  empty: El valor tiene que estar vacío
+  empty: El valor debe estar vacío
   nempty: El valor no puede estar vacío
   null: El valor tiene que ser nulo
   nnull: El valor no puede ser nulo
-  required: El valor es requerido
-  unique: El Valor tiene que ser único
+  required: Se requiere valor
+  unique: El valor tiene que ser único
   regex: El valor no tiene el formato correcto
-all_access: Todos los accesos
-no_access: Sin Acceso
-use_custom: Personalizar
-nullable: Acepta valores nulos
-allow_null_value: Permitir valor NULL
-enter_value_to_replace_nulls: Por favor, introduzca un nuevo valor para reemplazar cualquier valor NULO actualmente dentro de este campo.
+all_access: Acceso total
+no_access: Sin acceso
+use_custom: Usar personalizado
+nullable: Anulable
+allow_null_value: Permitir valor NULO
+allow_multiple: Permitir varios
+allow_multiple_to_be_open: Permitir que se abran varios
+enter_value_to_replace_nulls: Ingrese un nuevo valor para reemplazar cualquier valor NULL que se encuentre actualmente en este campo.
 field_standard: Estándar
-field_presentation: Presentación y Alias
-field_file: Un Archivo
-field_files: Múltiples Archivos
-field_m2o: Relación MAU
-field_m2a: Relación M2A
-field_o2m: Relación UAM
-field_m2m: Relación MAM
+field_presentation: Presentación y alias
+field_file: Fila india
+field_files: Varios archivos
+field_m2o: M2O Relación
+field_m2a: M2A Relación
+field_o2m: O2M Relación
+field_m2m: M2M Relación
 field_translations: Traducciones
-item_permissions: Permisos de Elemento
-field_permissions: Permisos de Campo
-field_validation: Validación de Campo
-field_presets: Predefinidos para Campo
-permissions_for_role: 'Elementos que el Rol {role} puede {action}.'
-fields_for_role: 'Campos que el Rol {role} puede {action}.'
-validation_for_role: 'Reglas de campo al {action} que el Rol {role} tiene que obedecer.'
-presets_for_role: 'Valores por defecto del Campo para el Rol {role}.'
-presentation_and_aliases: Presentación y Alias
-hide_field_on_detail: Ocultar campo en el Detalle
-show_field_on_detail: Mostrar campo en el Detalle
-delete_field: Eliminar Campo
-fields_and_layout: Campos y Diseño
-field_create_success: 'Campo Creado: "{field}"'
-field_update_success: 'Campo Actualizado: "{field}"'
-duplicate_where_to: '¿A dónde le gustaría duplicar este campo?'
+field_group: Grupo de campo
+item_permissions: Permisos de artículos
+field_permissions: Permisos de campo
+field_validation: Validación de campo
+field_presets: Ajustes preestablecidos de campo
+permissions_for_role: 'Elementos que el rol de {role} puede {action}.'
+fields_for_role: 'Campos el rol {role} puede {action}.'
+validation_for_role: 'El campo {action} gobierna el rol {role} que debe obedecer.'
+presets_for_role: 'Valores de campo predeterminados para el rol {role}.'
+presentation_and_aliases: Presentación y alias
+revision_post_create: Así es como se veía este elemento cuando se creó.
+revision_post_update: Así es como se veía este artículo después de la actualización.
+changes_made: A continuación se muestran los cambios específicos realizados en esta revisión.
+no_relational_data: Tenga en cuenta que los datos relacionales no se incluyen aquí.
+hide_field_on_detail: Ocultar campo en detalle
+show_field_on_detail: Mostrar campo en detalle
+delete_field: Eliminar campo
+fields_and_layout: Campos y diseño
+field_create_success: 'Campo creado: "{field}"'
+field_update_success: 'Campo actualizado: "{field}"'
+duplicate_where_to: ¿Dónde le gustaría duplicar este campo?
 language: Idioma
+aggregate_function: Función agregada
+aggregate_precision: Precisión agregada
+group_aggregation: Agregación de grupo
+group_precision: Precisión de grupo
 global: Global
-admins_have_all_permissions: Los Administradores tienen todos los permisos
-camera: Cámara
-exposure: Exposición
-shutter: Obturación
+admins_have_all_permissions: Los administradores tienen todos los permisos
+camera: Camera
+show_zero: Mostrar cero
+sum: Sum
+sum_distinct: Suma distinta
+avg: Promedio
+avg_distinct: Distinto promedio
+count: Contar
+count_distinct: Cuenta distinta
+min: Min
+max: Max
+exposure: Exposure
+shutter: Shutter
 iso: ISO
 focal_length: Distancia Focal
 schema_setup_key: Nombre de columna de este campo de la base de datos y clave API
@@ -164,7 +201,9 @@ alias: Alias
 bigInteger: Número Entero (Grande)
 boolean: Booleano
 date: Fecha
+date_range: Date Range
 datetime: Fecha y Hora
+precision: Precisión
 decimal: Decimal
 float: Número Flotante
 integer: Número Entero
@@ -176,6 +215,7 @@ time: Hora
 timestamp: Marca de Tiempo
 uuid: UUID
 hash: Hash
+geometry: Geometría
 not_available_for_type: No disponible para este Tipo
 create_translations: Crear Traducciones
 auto_refresh: Actualización automática
@@ -201,6 +241,8 @@ add_m2m_to_collection: 'Agregar Muchos-A-Muchos a "{collection}"'
 choose_a_type: Elegir un Tipo...
 determined_by_relationship: Determinado por la Relación
 add_note: Añadir una nota útil para los usuarios...
+add_link: Add Link
+custom_link: Custom Link
 default_value: Valor por Defecto
 standard_field: Campo Estándar
 single_file: Un Archivo
@@ -230,6 +272,7 @@ raw_value: Valor Plano
 edit_raw_value: Editar Valor Plano
 enter_raw_value: Ingresar valor plano...
 clear_value: Limpiar valor
+clear_changes: Clear Changes
 reset_to_default: Restablecer ajustes
 undo_changes: Deshacer cambios
 notifications: Notificaciones
@@ -249,6 +292,7 @@ revision_delta_reverted: Revertido
 revision_delta_other: Revisión
 revision_delta_by: '{date} por {user}'
 private_user: Usuario Privado
+creation_preview: Creation Preview
 revision_preview: Vista Previa de Revisión
 updates_made: Actualizaciones Realizadas
 leave_comment: Deja un comentario...
@@ -372,7 +416,9 @@ no_files_copy: Aquí no hay archivos.
 user_count: 'Sin Usuarios | Un Usuario | {count} Usuarios'
 no_users_copy: No hay usuarios con este Rol aún.
 webhooks_count: 'Sin Webhooks | Un Webhook | {count} Webhooks'
+no_webhooks_copy: No webhooks have been configured yet. Get started by creating one below.
 all_items: Todos los Elementos
+any: Any
 csv: CSV
 no_collections: Sin Colecciones
 create_collection: Crear colección
@@ -382,11 +428,21 @@ relationship_not_setup: La relación no se ha configurado correctamente
 display_template_not_setup: La opción de plantilla de Presentación está mal configurada
 collection_field_not_setup: La opción del campo de colección está mal configurada
 select_a_collection: Seleccionar una Colección
+select_a_field: Seleccione un campo
 active: Activo
+move_to: Mover a...
 copy: Copiar
+copy_to: Copiar a...
+no_other_dashboards_copy: Aún no tiene otros paneles.
+inactive: Inactive
 users: Usuarios
 activity: Actividad
 webhooks: Webhooks
+decimals: Decimales
+value_decimals: Decimales de valor
+min_value: Valor mínimo
+max_value: Valor máximo
+automatic: Automático
 field_width: Ancho de Campo
 add_filter: Agregar Filtro
 upper_limit: Límite Superior...
@@ -437,7 +493,9 @@ errors:
   UNPROCESSABLE_ENTITY: Entidad no procesable
   INTERNAL_SERVER_ERROR: Error Inesperado
   NOT_NULL_VIOLATION: El valor no puede ser nulo
+  ILLEGAL_ASSET_TRANSFORMATION: La fuente de la imagen es demasiado grande para obtener una vista previa
   UNKNOWN: Error Inesperado
+security: Seguridad
 value_hashed: Valor Hasheado de Manera Segura
 bookmark_name: Nombre del Marcador...
 create_bookmark: Crear Marcador
@@ -452,6 +510,7 @@ no_app_access_copy: Este usuario no tiene permitido usar la app administrativa.
 password_reset_sent: Le hemos enviado un enlace seguro para restablecer su contraseña
 password_reset_successful: Contraseña restablecida exitósamente
 back: Volver
+filter: Filtrar
 editing_image: Editar Imagen
 square: Cuadrado
 free: Libre
@@ -474,6 +533,7 @@ visible_collections: Colecciones Visibles
 hidden_collections: Colecciones Ocultas
 show_hidden_collections: Mostrar colecciones ocultas
 hide_hidden_collections: Ocultar colecciones ocultas
+show_header: Show Header
 unmanaged_collections: Colecciones No Configuradas
 system_collections: Colecciones del Sistema
 placeholder: Valor de Ejemplo
@@ -489,6 +549,8 @@ color: Color
 circle: Círculo
 empty_item: Elemento Vacío
 log_in_with: 'Iniciar Sesión con {provider}'
+conditional_styles: Estilos condicionales
+advanced_settings: Ajustes avanzados
 advanced_filter: Filtro Avanzado
 delete_advanced_filter: Borrar filtro
 change_advanced_filter_operator: Cambiar operador
@@ -515,6 +577,10 @@ operators:
   nempty: No está Vacío
   all: Contiene estas llaves
   has: Contiene alguna de estas llaves
+  intersects: Intersecta
+  nintersects: No se cruza
+  intersects_bbox: Intersecta el cuadro delimitador
+  nintersects_bbox: No se cruza con el cuadro delimitador
 loading: Cargando...
 drop_to_upload: Arrastrar para Subir
 item: Elemento
@@ -558,6 +624,7 @@ user: Usuario
 no_presets: Sin Predefinidos
 no_presets_copy: Los Predefinidos o Marcadores no se han guardado aún.
 no_presets_cta: Agregar Predefinido
+presets_only: Solo preajustes
 create: Crear
 on_create: Al Crear
 on_update: Al Actualizar
@@ -565,15 +632,41 @@ read: Leer
 update: Actualización
 select_fields: Seleccionar Campos
 format_text: Formatear Texto
+format_value: Valor de formato
+abbreviate_value: Valor abreviado
+operator: Operator
 bold: Negrita
 toggle: Alternar
 icon_on: Icono Activado
 icon_off: Icono Desactivado
 label: Etiqueta
+insights: Insights (Beta)
+dashboard: Dashboard
+panel: Panel
+panel_options: Opciones de panel
+panel_header: Encabezado del panel
+panel_name_placeholder: Nombra este panel ...
+panel_note_placeholder: Detalles opcionales sobre este panel ...
+panel_delete_confirm: ¿Está seguro de que desea eliminar este panel? Esta acción no se puede deshacer.
+dashboard_delete_confirm: ¿Está seguro de que desea eliminar este panel? Esta acción no se puede deshacer.
+edit_dashboard: Editar panel
+delete_dashboard: Eliminar panel
+visible: Visible
+prefix_placeholder: Texto antes del valor ...
+suffix_placeholder: Texto tras valor ...
+decimals_placeholder: Número de decimales ...
+no_dashboards: Sin paneles
+no_dashboards_copy: Todavía no tiene ningún Panel de control.
+no_data: Sin datos
+create_dashboard: Crear panel
+dashboard_name: Nombre del tablero
 full_screen: Pantalla Completa
+edit_panels: Editar paneles
+fit_to_screen: Ajustar a la pantalla
 image_url: Url de la imagen
 alt_text: Texto Alternativo
 media: Medios
+quality: Quality
 width: Ancho
 height: Alto
 source: Fuente
@@ -666,7 +759,11 @@ layout_setup: Configuración del Diseño
 unsaved_changes: Cambios sin Guardar
 unsaved_changes_copy: '¿Realmente desea salir de esta página?'
 discard_changes: Descartar Cambios
+discard_changes_copy: ¿Está seguro de que desea descartar todos los cambios realizados?
+show_x_axis: Mostrar eje X
+show_y_axis: Mostrar eje Y
 keep_editing: Seguir Editando
+page_help_collections_overview: '** Resumen de colecciones **: lista de todas las colecciones a las que tiene acceso.'
 page_help_collections_collection: >-
   **Navegar en Elementos** - Lista todos los elementos en {collection} a las que tiene acceso. Puede personalizar el Diseño, Filtros y Ordenamientos para adaptar sus vistas, incluso puede guardar Marcadores de esas configuraciones para un rápido acceso.
 page_help_collections_item: >-
@@ -695,6 +792,8 @@ page_help_settings_webhooks_item: '**Detalle de Webhook** — Una manera de crea
 page_help_users_collection: '**Directorio de Usuarios** — Lista todos los usuarios del sistema en este proyecto.'
 page_help_users_item: >-
   **Detalle de Usuario** — Administre su información de cuenta, o visualice el detalle de otros usuarios.
+page_help_insights_overview: '**Insights** — Lista de paneles a los que tiene acceso.'
+page_help_insights_dashboard: '**Dashboard** — Espacio de trabajo para administrar uno o más paneles'
 activity_feed: Actividad
 add_new: Añadir Nuevo
 create_new: Crear Nuevo
@@ -704,11 +803,28 @@ no_layout_collection_selected_yet: Plantilla/Colección No seleccionada aún
 batch_delete_confirm: >-
   No se han seleccionado entradas | ¿Está seguro de que desea eliminar esta entrada? Esta acción no puede deshacerse. | Está seguro de que desea eliminar estas {count} entradas? Esta acción no puede deshacerse.
 cancel: Cancelar
+no_upscale: No mejore las imágenes
 collection: Colección
 collections: Colecciones
 singleton: Singleton
 singleton_label: Tratar como un sólo objeto
 system_fields_locked: Los campos del sistema están bloqueados y no pueden ser editados
+directus_collection:
+  directus_activity: Registros de responsabilidad para todos los eventos
+  directus_collections: Configuración y metadatos adicionales de la colección
+  directus_fields: Configuración de campo adicional y metadatos
+  directus_files: Metadatos para todos los activos de archivos administrados
+  directus_folders: Proporciona directorios virtuales para archivos.
+  directus_migrations: Qué versión de la base de datos estás usando
+  directus_permissions: Permisos de acceso para cada rol
+  directus_presets: Ajustes preestablecidos para marcadores y valores predeterminados de la colección
+  directus_relations: Configuración de relaciones y metadatos
+  directus_revisions: Instantáneas de datos para toda la actividad
+  directus_roles: Grupos de permisos para usuarios del sistema
+  directus_sessions: Información de la sesión de usuario
+  directus_settings: Opciones de configuración del proyecto
+  directus_users: Usuarios del sistema para la plataforma
+  directus_webhooks: Configuración para solicitudes HTTP basadas en eventos
 fields:
   directus_activity:
     item: Clave Primaria del Item
@@ -768,27 +884,52 @@ fields:
     title: Título
     description: Descripción
     tags: Etiquetas
+    user_preferences: Preferencias del usuario
     language: Idioma
     theme: Tema
+    theme_auto: Automático (basado en el sistema)
+    theme_light: Light Mode
+    theme_dark: Dark Mode
     tfa_secret: Autentificación en 2 Pasos
+    admin_options: Opciones de administrador
     status: Estado
+    status_draft: Borrador
+    status_invited: Invitado
     status_active: Activo
+    status_suspended: Suspendido
+    status_archived: Archivado
     role: Rol
     token: Token
+    token_placeholder: Ingrese un token de acceso seguro ...
     last_page: Última Página
     last_access: Último Acceso
   directus_settings:
+    jpg: JPEG
+    png: PNG
+    webP: WebP
+    tiff: Tiff
+    basemaps_raster: Raster
+    basemaps_tile: Raster TileJSON
+    basemaps_style: Estilo Mapbox
+    mapbox_key: Token de acceso a Mapbox
+    mapbox_placeholder: pk.eyJ1Ijo.....
+    transforms_note: El nombre del método Sharp y sus argumentos. Consulte https://sharp.pixelplumbing.com/api-constructor para obtener más información.
+    additional_transforms: Transformaciones adicionales
     project_name: Nombre del Proyecto
     project_url: URL del Proyecto
     project_color: Color del Proyecto
     project_logo: Logo del Proyecto
+    public_pages: Public Pages
     public_foreground: Superficie Pública
     public_background: Fondo Público
     public_note: Notas Públicas
     auth_password_policy: Política de Contraseña para Autentificación
     auth_login_attempts: Intentos de Inicio de Sesión al Autentificarse
+    files_and_thumbnails: Files & Thumbnails
+    storage_default_folder: Carpeta predeterminada de almacenamiento
     storage_asset_presets: Predefinidos de Activos en Almacenamiento
     storage_asset_transform: Transformación de Activos en Almacenamiento
+    overrides: Anulaciones de aplicaciones
     custom_css: CSS Personalizado
   directus_fields:
     collection: Nombre de Colección
@@ -811,9 +952,39 @@ fields:
     collection_list: Navegación en Colección
   directus_webhooks:
     name: Nombre
+    method: Método
     status: Estado
+    data: Datos
+    data_label: Send Event Data
+    triggers: Disparadores
+    actions: Comportamiento
 field_options:
+  directus_settings:
+    project_name_placeholder: Mi proyecto...
+    project_logo_note: Fondo de inicio de sesión y logotipo
+    public_note_placeholder: Un mensaje público breve que admite el formato de rebajas ...
+    security_divider_title: Seguridad
+    auth_password_policy:
+      none_text: Ninguno - No recomendado
+      weak_text: Débil - Mínimo 8 caracteres
+      strong_text: Fuerte - Mayúsculas / Minúsculas / Números / Especial
+    storage_asset_presets:
+      fit:
+        contain_text: Contener (preservar la relación de aspecto)
+        cover_text: Cobertura (fuerza el tamaño exacto)
+        fit_text: Encajar en el interior
+        outside_text: Encajar afuera
+    additional_transforms: Transformaciones adicionales
+    transforms_note: El nombre del método Sharp y sus argumentos. Consulte https://sharp.pixelplumbing.com/api-constructor para obtener más información.
+    mapbox_key: Mapbox Access Token
+    mapbox_placeholder: pk.eyJ1Ijo.....
+    basemaps_raster: Ráster
+    basemaps_tile: Mosaico de tramaJSON
+    basemaps_style: Estilo Mapbox
+    files_divider_title: Archivos y miniaturas
+    overrides_divider_title: Anulaciones de aplicaciones
   directus_activity:
+    login: Login
     create: Crear
     update: Actualización
     delete: Eliminar
@@ -822,27 +993,70 @@ field_options:
     only_track_activity: Sólo seguimiento de actividad
     do_not_track_anything: No realizar seguimiento
     collection_setup: Configuración de Colección
+    note_placeholder: Una descripción de esta colección ...
+    hidden_label: Ocultar dentro de la aplicación
     singleton: Tratar como un sólo objeto
     language: Idioma
+    translation: Ingrese una traducción ...
     archive_divider: Archivar
+    archive_field: Elija un campo ...
+    archive_app_filter: Habilitar el filtro de archivo de la aplicación
+    archive_value: Valor establecido al archivar ...
+    unarchive_value: Valor establecido al desarchivar ...
     divider: Ordenar
+    sort_field: Elija un campo ...
+    accountability_divider: Responsabilidad
+  directus_files:
+    title: Un título único ...
+    description: Una descripción opcional ...
+    location: Una ubicación opcional ...
+    storage_divider: Nomenclatura de archivos
+    filename_disk: Nombre en el almacenamiento en disco ...
+    filename_download: Nombre al descargar ...
   directus_roles:
+    name: El nombre único para este rol ...
+    description: Una descripción de este rol ...
+    ip_access: Agregue direcciones IP permitidas, déjelas en blanco para permitir todas ...
     fields:
       icon_name: Ícono
       name_name: Nombre
       name_placeholder: Ingresar un título...
+      link_name: Link
+      link_placeholder: URL relativa o absoluta ...
     collection_list:
+      group_name_addLabel: Agregar nuevo grupo ...
       fields:
+        group_name: Nombre del grupo
+        group_placeholder: Etiquetar este grupo ...
         type_name: Tipo
+        choices_always: Siempre abierto
+        choices_start_open: Iniciar abierto
+        choices_start_collapsed: Empezar contraído
     collections_name: Colecciones
+    collections_addLabel: Agregar colección ...
   directus_users:
+    preferences_divider: Preferencias del usuario
+    dropdown_auto: Automático (basado en el sistema)
+    dropdown_light: Light Mode
+    dropdown_dark: Dark Mode
+    admin_divider: Opciones de administrador
+    status_dropdown_draft: Borrador
+    status_dropdown_invited: Invitado
     status_dropdown_active: Activo
+    status_dropdown_suspended: Suspendido
+    status_dropdown_archived: Archivado
+    token: Ingrese un token de acceso seguro ...
   directus_webhooks:
     status_options_active: Activo
+    status_options_inactive: Inactivo
+    data_label: Enviar datos de eventos
+    triggers_divider: Triggers
     actions_create: Crear
     actions_update: Actualización
     actions_delete: Eliminar
+    actions_login: Login
 no_fields_in_collection: 'Aún no hay campos en "{collection}"'
+no_value: No value
 do_nothing: No hacer nada
 generate_and_save_uuid: Generar y Guardar UUID
 save_current_user_id: Guardar ID de Usuario Actual
@@ -925,13 +1139,27 @@ report_error: Reportar Error
 start: Iniciar
 interfaces:
   filter:
+    name: Filtrar
+    description: Configure un objeto de filtro.
     add_filter: Agregar Filtro
+    add_group: Y / O grupo
+    add_value: Añadir valor
     all: Todo
+    any: Alguna
+    and: y
+    of_the_following: de los siguientes
+    no_rules: Sin reglas configuradas
+    change_value: Haga clic para cambiar el valor
+    placeholder: Arrastra las reglas aquí
   group-accordion:
+    name: Accordion
+    description: Mostrar campos o grupos como secciones de acordeón
     start: Iniciar
     all_closed: Todo Cerrado
     first_opened: Primero Abierto
     all_opened: Todo Abierto
+    accordion_mode: Accordion Mode
+    max_one_section_open: Max 1 sección abierta
   presentation-links:
     presentation-links: Botón de enlace
     links: Enlaces
@@ -947,6 +1175,13 @@ interfaces:
     allow_other: Permitir otro
     show_more: 'Mostrar {count} más'
     items_shown: Elementos Mostrados
+  select-multiple-checkbox-tree:
+    name: Checkboxes (Árbol)
+    description: Elija entre múltiples opciones a través de casillas de verificación anidadas
+    value_combining: Combinación de valor
+    value_combining_note: Controla qué valor se almacena cuando se realizan selecciones anidadas.
+    show_all: Mostrar todo
+    show_selected: Mostrar seleccionados
   input-code:
     code: Código
     description: Escribir o compartir fragmentos de código
@@ -1041,19 +1276,45 @@ interfaces:
     imageToken: Token de Imagen
     imageToken_label: Qué token (estático) añadir a las fuentes de la imagen
   map:
+    map: Map
+    description: Seleccionar una ubicación en un mapa
     zoom: Zoom
+    geometry_type: Tipo de geometría
+    geometry_format: Formato de geometría
+    default_view: Vista predeterminada
+    invalid_options: Opciones inválidas
+    invalid_format: Formato no válido ({formato})
+    unexpected_geometry: Esperado {esperado}, obtenido {obtenido}.
+    fit_bounds: Ajustar la vista a los datos
+    native: Nativo
+    geojson: GeoJSON
+    lnglat: Longitud, latitud
+    wkt: WKT
+    wkb: WKB
   presentation-notice:
     notice: Aviso
+    description: Mostrar un aviso breve
+    text: Ingrese el contenido del aviso aquí ...
   list-o2m:
     one-to-many: Uno a Muchos
+    description: Seleccionar varios elementos relacionados
     no_collection: No se encontró la colección
   system-folder:
     folder: Directorio
     description: Seleccione una carpeta
+    field_hint: Coloca los archivos recién cargados en la carpeta seleccionada. No afecta a los archivos existentes seleccionados.
     root_name: Raíz de la Biblioteca de Archivos
     system_default: Valores por defecto del sistema
+  select-radio:
+    radio-buttons: Radio Buttons
+    description: Seleccione una de las múltiples opciones
   list:
     repeater: Repetidor
+    description: Crea múltiples entradas de la misma estructura
+    edit_fields: Editar campos
+    add_label: '"Crear nueva etiqueta'
+    field_name_placeholder: Ingrese el nombre del campo ...
+    field_note_placeholder: Introduzca nota de campo ...
   slider:
     slider: Deslizador
     description: Seleccionar un número usando un deslizador
@@ -1073,6 +1334,10 @@ interfaces:
     alphabetize_label: Forzar Orden Alfabético
     add_tags: Agregar etiquetas...
   input:
+    input: Input
+    description: Ingrese un valor manualmente
+    trim: Trim
+    trim_label: Trim the start and end
     mask: Enmascarado
     mask_label: Ocultar el valor real
     clear: Valor Limpiado
@@ -1081,15 +1346,23 @@ interfaces:
     maximum_value: Valor Máximo
     step_interval: Intervalo de Pasos
     slug: Slugify
+    slug_label: Hacer segura la URL del valor ingresado
   input-multiline:
     textarea: Área de Texto
+    description: Ingrese texto sin formato de varias líneas
   boolean:
     toggle: Alternar
     description: Alternar entre Activado y Desactivado
+    label_placeholder: Enter a label...
     label_default: Habilitado
   translations:
     display_template: Plantilla de Presentación
     no_collection: Sin Colección
+    toggle_split_view: Alternar vista dividida
+    language_field: Campo de idioma
+  list-o2m-tree-view:
+    description: Vista de árbol para elementos uno a muchos recursivos anidados
+    recursive_only: La interfaz de vista de árbol solo funciona para relaciones recursivas.
   user:
     user: Usuario
     description: Seleccionar un usuario existente de Directus
@@ -1100,11 +1373,28 @@ interfaces:
       modal: Diálogo
   input-rich-text-html:
     wysiwyg: WYSIWYG
+    description: Un editor de texto enriquecido que escribe contenido HTML
     toolbar: Barra de Herramientas
     custom_formats: Formatos Personalizados
     options_override: Sobrescribir Opciones
   input-autocomplete-api:
+    input-autocomplete-api: Entrada de autocompletar (API)
+    description: Una búsqueda anticipada de valores de API externos.
     results_path: Ruta de Resultados
+    value_path: Ruta de valor
+    trigger: Desencadenar
+    rate: Ritmo
+  group-raw:
+    name: Grupo crudo
+    description: Renderice los campos como están
+  group-detail:
+    name: Grupo de detalle
+    description: Renderice los campos como una sección plegable
+    show_header: Mostrar encabezado de grupo
+    header_icon: Icono de encabezado
+    header_color: Color de encabezado
+    start_open: Comenzar abierto
+    start_closed: Inicio cerrado
 displays:
   boolean:
     boolean: Booleano
@@ -1211,6 +1501,36 @@ layouts:
     calendar: Calendario
     start_date_field: Campo Fecha de Inicio
     end_date_field: Campo Fecha de Fin
+  map:
+    map: Mapa
+    basemap: Mapa base
+    layers: Capas
+    edit_custom_layers: Editar capas
+    cluster_options: Opciones de agrupación en clústeres
+    cluster: Activar la agrupación en clústeres
+    cluster_radius: Radio de racimo
+    cluster_minpoints: Tamaño mínimo del clúster
+    cluster_maxzoom: Zoom máximo para agrupamiento
+    field: Geometría
+    invalid_geometry: Geometría no válida
+    auto_location_filter: Filtre siempre los datos para ver los límites
+    search_this_area: Buscar en esta zona
+    clear_data_filter: Borrar filtro de datos
+    clear_location_filter: Borrar filtro de ubicación
+
 panels:
+  metric:
+    name: Métrica
+    description: Mostrar un solo valor basado en una consulta
+    field: Campo
+  time_series:
+    name: Series de tiempo
+    description: Representar un gráfico de líneas basado en valores a lo largo del tiempo
+    date_field: Campo de fecha
+    value_field: Campo de valor
   label:
     name: Etiqueta
+    description: Muestra algo de texto
+  list:
+    name: Lista
+    description: Filtrar y enumerar campos de una colección

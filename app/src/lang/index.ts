@@ -3,14 +3,14 @@ import { createI18n } from 'vue-i18n';
 import availableLanguages from './available-languages.yaml';
 import datetimeFormats from './date-formats.yaml';
 import numberFormats from './number-formats.yaml';
-import enUSBase from './translations/en-US.yaml';
+import enESBase from './translations/es-ES.yaml';
 
 export const i18n = createI18n({
 	legacy: false,
-	locale: 'en-US',
-	fallbackLocale: 'en-US',
+	locale: 'en-ES',
+	fallbackLocale: 'en-ES',
 	messages: {
-		'en-US': enUSBase,
+		'en-ES': enESBase,
 	},
 	silentTranslationWarn: true,
 	datetimeFormats,
@@ -19,7 +19,7 @@ export const i18n = createI18n({
 
 export type Language = keyof typeof availableLanguages;
 
-export const loadedLanguages: Language[] = ['en-US'];
+export const loadedLanguages: Language[] = ['en-ES'];
 
 export function translateAPIError(error: RequestError | string): string {
 	const defaultMsg = i18n.global.t('unexpected_error');

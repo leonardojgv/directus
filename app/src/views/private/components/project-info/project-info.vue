@@ -1,7 +1,7 @@
 <template>
 	<div class="project-info">
 		<latency-indicator />
-		<span class="name">{{ name }}</span>
+		<span class="name">Señal</span>
 	</div>
 </template>
 
