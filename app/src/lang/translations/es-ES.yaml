@@ -51,7 +51,6 @@ indeterminate: Indeterminado
 edit_collection: Editar Colección
 exclusive: Exclusivo
 children: Subsecciones
-db_only_click_to_configure: 'Solo Base de Datos: Clic para Configurar '
 show_archived_items: Mostrar Elementos Archivados
 edited: Valor Editado
 required: Requerido
@@ -437,6 +436,9 @@ no_other_dashboards_copy: Aún no tienes un Panel.
 inactive: Inactivo
 users: Usuarios
 activity: Actividad
+action: Acción
+ip_address: Dirección IP
+user_agent: Agente de Usuario (Navegador)
 webhooks: Webhooks
 decimals: Decimales
 value_decimals: Valor Decimal
@@ -998,7 +1000,9 @@ field_options:
     singleton: Tratar como un sólo objeto
     language: Idioma
     translation: Ingrese una traducción ...
+    collection_name: Nombre de Colección
     archive_divider: Archivar
+    sort_divider: Ordenar
     archive_field: Elija un campo ...
     archive_app_filter: Habilitar el filtro de archivo de la aplicación
     archive_value: Valor establecido al archivar ...
@@ -1396,6 +1400,8 @@ interfaces:
     start_open: Comenzar abierto
     start_closed: Inicio cerrado
 displays:
+  translations:
+    translations: Traducciones
   boolean:
     boolean: Booleano
     description: Presentar estados Activo e Inactivo
