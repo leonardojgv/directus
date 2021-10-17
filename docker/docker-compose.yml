@@ -11,6 +11,6 @@ services:
       ADMIN_EMAIL: 'admin@test.com'
       ADMIN_PASSWORD: 'tester123'
     volumes:
-      - /database:/directus/database
-      - /extensions:/directus/extensions
-      - /uploads:/directus/uploads
+      - ./database:/directus/database
+      - ./extensions:/directus/extensions
+      - ./uploads:/directus/uploads
