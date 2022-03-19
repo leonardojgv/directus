@@ -214,9 +214,9 @@ mutation {
 ## Import Data from File
 
 Import multiple records from a JSON or CSV file into a collection. Relies on a `multipart/form-data` encoded request,
-just like regular file uploads. Check [Upload a File](/reference/api/system/files/#upload-a-file) for more information.
+just like regular file uploads. Check [Upload a File](/reference/files/#upload-a-file) for more information.
 
-The import endpoint expects the file structure to match [the export query parameter](/reference/api/query/#export). For
+The import endpoint expects the file structure to match [the export query parameter](/reference/query/#export). For
 JSON, this is an array of objects, where every object is an item. For CSV, the first line has to be the columns header.
 
 <div class="two-up">
@@ -224,8 +224,8 @@ JSON, this is an array of objects, where every object is an item. For CSV, the f
 
 ### Request Body
 
-Send the file in a `multipart/form-data` request. See [Upload a File](/reference/api/system/files/#upload-a-file) for
-more information.
+Send the file in a `multipart/form-data` request. See [Upload a File](/reference/files/#upload-a-file) for more
+information.
 
 ### Returns
 
@@ -259,6 +259,75 @@ Content-Type: text/csv
 4,"My Fourth Article","abc","506385A2-E444-4AE2-A860-F00957A62C8A"
 5,"My Fifth Article","abc","506385A2-E444-4AE2-A860-F00957A62C8A"
 ...
+```
+
+### GraphQL
+
+n/a
+
+</div>
+</div>
+
+---
+
+## Export Data to a File
+
+Export a larger data set to a file in the File Library
+
+<div class="two-up">
+<div class="left">
+
+### Query Parameters
+
+Doesn't use any query parameters.
+
+### Request Body
+
+<div class="definitions">
+
+`format` **Required**\
+What file format to save the export to. One of `csv`, `xml`, `json`.
+
+`query` **Required**\
+The query object to use for the export. Supports the [global query parameters](/reference/query).
+
+`file` **File Object**\
+Partial file object to tweak where / how the export file is saved.
+
+</div>
+
+### Returns
+
+Empty body
+
+</div>
+<div class="right">
+
+### REST API
+
+```
+POST /utils/export/:collection
+```
+
+##### Example
+
+```
+POST /utils/export/articles
+```
+
+```json
+{
+	"query": {
+		"filter": {
+			"status": {
+				"_eq": "published"
+			}
+		}
+	},
+	"file": {
+		"folder": "34e95c19-cc50-42f2-83c8-b97616ac2390"
+	}
+}
 ```
 
 ### GraphQL

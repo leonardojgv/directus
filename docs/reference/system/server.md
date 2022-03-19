@@ -8,7 +8,7 @@ pageClass: page-reference
 <div class="left">
 
 > Provides detailed information about the project server, its schema, and its health.
-> [Learn more about Projects](/concepts/projects/).
+> [Learn more about Projects](/getting-started/glossary/#projects).
 
 </div>
 <div class="right">
@@ -208,7 +208,7 @@ The public information is returned for everybody. Admin users get additional inf
 `project` **object**\
 Public information about the project. Used to render the Admin App public pages.
 
-See [the settings object](/reference/api/settings/#the-settings-object) for more information on the individual
+See [the settings object](/reference/system/settings/#the-settings-object) for more information on the individual
 properties of the `project` object.
 
 </div>
@@ -291,8 +291,8 @@ such as Redis or S3.
 The output is based on the "Health Check Response for HTTP APIs" draft spec:
 [Health Check Response Format for HTTP APIs Draft Specification](https://tools.ietf.org/id/draft-inadarei-api-health-check-05.html).
 
-This endpoint can be used to ensure a healthy system when running in a horizontally scaled setup, like Kubernetes or AWS
-Elastic Beanstalk.
+This endpoint can be used to ensure a healthy system when running in a horizontally scaled setup, like Kubernetes,
+Google Cloud Platform or AWS Elastic Beanstalk.
 
 By default, the endpoint only returns a `status` of `ok`, `warn` or `error`. By authenticating as an admin, it will
 return more in-depth information about the current health status of the system.

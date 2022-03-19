@@ -5,15 +5,21 @@ import { clone } from 'lodash';
 import { extension } from 'mime-types';
 import path from 'path';
 import sharp from 'sharp';
-import url from 'url';
-import { emitAsyncSafe } from '../emitter';
+import url, { URL } from 'url';
+import { promisify } from 'util';
+import { lookup } from 'dns';
+import emitter from '../emitter';
 import env from '../env';
 import { ForbiddenException, ServiceUnavailableException } from '../exceptions';
 import logger from '../logger';
 import storage from '../storage';
-import { AbstractServiceOptions, File, PrimaryKey } from '../types';
+import { AbstractServiceOptions, File, PrimaryKey, MutationOptions } from '../types';
 import { toArray } from '@directus/shared/utils';
-import { ItemsService, MutationOptions } from './items';
+import { ItemsService } from './items';
+import net from 'net';
+import os from 'os';
+
+const lookupDNS = promisify(lookup);
 
 export class FilesService extends ItemsService {
 	constructor(options: AbstractServiceOptions) {
@@ -26,7 +32,8 @@ export class FilesService extends ItemsService {
 	async uploadOne(
 		stream: NodeJS.ReadableStream,
 		data: Partial<File> & { filename_download: string; storage: string },
-		primaryKey?: PrimaryKey
+		primaryKey?: PrimaryKey,
+		opts?: MutationOptions
 	): Promise<PrimaryKey> {
 		const payload = clone(data);
 
@@ -74,14 +81,19 @@ export class FilesService extends ItemsService {
 
 		if (['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/tiff'].includes(payload.type)) {
 			const buffer = await storage.disk(data.storage).getBuffer(payload.filename_disk);
-			const meta = await sharp(buffer.content, {}).metadata();
+			try {
+				const meta = await sharp(buffer.content, {}).metadata();
 
-			if (meta.orientation && meta.orientation >= 5) {
-				payload.height = meta.width;
-				payload.width = meta.height;
-			} else {
-				payload.width = meta.width;
-				payload.height = meta.height;
+				if (meta.orientation && meta.orientation >= 5) {
+					payload.height = meta.width;
+					payload.width = meta.height;
+				} else {
+					payload.width = meta.width;
+					payload.height = meta.height;
+				}
+			} catch (err: any) {
+				logger.warn(`Couldn't extract sharp metadata from file`);
+				logger.warn(err);
 			}
 
 			payload.metadata = {};
@@ -106,7 +118,7 @@ export class FilesService extends ItemsService {
 					payload.tags = payload.metadata.iptc.Keywords;
 				}
 			} catch (err: any) {
-				logger.warn(`Couldn't extract metadata from file`);
+				logger.warn(`Couldn't extract EXIF metadata from file`);
 				logger.warn(err);
 			}
 		}
@@ -124,16 +136,21 @@ export class FilesService extends ItemsService {
 			await this.cache.clear();
 		}
 
-		emitAsyncSafe(`files.upload`, {
-			event: `files.upload`,
-			accountability: this.accountability,
-			collection: this.collection,
-			item: primaryKey,
-			action: 'upload',
-			payload,
-			schema: this.schema,
-			database: this.knex,
-		});
+		if (opts?.emitEvents !== false) {
+			emitter.emitAction(
+				'files.upload',
+				{
+					payload,
+					key: primaryKey,
+					collection: this.collection,
+				},
+				{
+					database: this.knex,
+					schema: this.schema,
+					accountability: this.accountability,
+				}
+			);
+		}
 
 		return primaryKey;
 	}
@@ -142,12 +159,60 @@ export class FilesService extends ItemsService {
 	 * Import a single file from an external URL
 	 */
 	async importOne(importURL: string, body: Partial<File>): Promise<PrimaryKey> {
-		const fileCreatePermissions = this.schema.permissions.find(
+		const fileCreatePermissions = this.accountability?.permissions?.find(
 			(permission) => permission.collection === 'directus_files' && permission.action === 'create'
 		);
 
-		if (this.accountability?.admin !== true && !fileCreatePermissions) {
+		if (this.accountability && this.accountability?.admin !== true && !fileCreatePermissions) {
 			throw new ForbiddenException();
+		}
+
+		let resolvedUrl;
+
+		try {
+			resolvedUrl = new URL(importURL);
+		} catch (err: any) {
+			logger.warn(err, `Requested URL ${importURL} isn't a valid URL`);
+			throw new ServiceUnavailableException(`Couldn't fetch file from url "${importURL}"`, {
+				service: 'external-file',
+			});
+		}
+
+		let ip = resolvedUrl.hostname;
+
+		if (net.isIP(ip) === 0) {
+			try {
+				ip = (await lookupDNS(ip)).address;
+			} catch (err: any) {
+				logger.warn(err, `Couldn't lookup the DNS for url ${importURL}`);
+				throw new ServiceUnavailableException(`Couldn't fetch file from url "${importURL}"`, {
+					service: 'external-file',
+				});
+			}
+		}
+
+		if (env.IMPORT_IP_DENY_LIST.includes('0.0.0.0')) {
+			const networkInterfaces = os.networkInterfaces();
+
+			for (const networkInfo of Object.values(networkInterfaces)) {
+				if (!networkInfo) continue;
+
+				for (const info of networkInfo) {
+					if (info.address === ip) {
+						logger.warn(`Requested URL ${importURL} resolves to localhost.`);
+						throw new ServiceUnavailableException(`Couldn't fetch file from url "${importURL}"`, {
+							service: 'external-file',
+						});
+					}
+				}
+			}
+		}
+
+		if (env.IMPORT_IP_DENY_LIST.includes(ip)) {
+			logger.warn(`Requested URL ${importURL} resolves to a denied IP address.`);
+			throw new ServiceUnavailableException(`Couldn't fetch file from url "${importURL}"`, {
+				service: 'external-file',
+			});
 		}
 
 		let fileResponse: AxiosResponse<NodeJS.ReadableStream>;
@@ -157,8 +222,7 @@ export class FilesService extends ItemsService {
 				responseType: 'stream',
 			});
 		} catch (err: any) {
-			logger.warn(`Couldn't fetch file from url "${importURL}"`);
-			logger.warn(err);
+			logger.warn(err, `Couldn't fetch file from url "${importURL}"`);
 			throw new ServiceUnavailableException(`Couldn't fetch file from url "${importURL}"`, {
 				service: 'external-file',
 			});

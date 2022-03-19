@@ -1,6 +1,13 @@
 <template>
 	<div class="interface-map">
-		<div class="map" :class="{ loading: mapLoading, error: geometryParsingError || geometryOptionsError }">
+		<div
+			class="map"
+			:class="{
+				loading: mapLoading,
+				error: geometryParsingError || geometryOptionsError,
+				'has-selection': selection.length > 0,
+			}"
+		>
 			<div ref="container" />
 		</div>
 		<div
@@ -58,7 +65,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import { defineComponent, onMounted, onUnmounted, PropType, ref, watch, toRefs, computed } from 'vue';
-import {
+import maplibre, {
 	LngLatLike,
 	LngLatBoundsLike,
 	AnimationOptions,
@@ -66,7 +73,7 @@ import {
 	Map,
 	NavigationControl,
 	GeolocateControl,
-	PointLike,
+	AttributionControl,
 } from 'maplibre-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 // @ts-ignore
@@ -79,7 +86,6 @@ import { flatten, getBBox, getParser, getSerializer, getGeometryFormatForType } 
 import {
 	Field,
 	GeometryType,
-	GeometryFormat,
 	GeoJSONParser,
 	GeoJSONSerializer,
 	SimpleGeometry,
@@ -87,7 +93,7 @@ import {
 } from '@directus/shared/types';
 import getSetting from '@/utils/get-setting';
 import { snakeCase, isEqual, debounce } from 'lodash';
-import drawLayers from './style';
+import { getMapStyle } from './style';
 const activeLayers = [
 	'directus-point',
 	'directus-line',
@@ -125,10 +131,6 @@ export default defineComponent({
 			type: Boolean,
 			default: false,
 		},
-		geometryFormat: {
-			type: String as PropType<GeometryFormat>,
-			default: undefined,
-		},
 		geometryType: {
 			type: String as PropType<GeometryType>,
 			default: undefined,
@@ -149,9 +151,10 @@ export default defineComponent({
 		const geometryOptionsError = ref<string | null>();
 		const geometryParsingError = ref<string | TranslateResult>();
 
-		const geometryType = (props.fieldData?.schema?.geometry_type ?? props.geometryType) as GeometryType;
-		const geometryFormat = props.geometryFormat || getGeometryFormatForType(props.type)!;
+		const geometryType = props.geometryType || (props.fieldData?.type.split('.')[1] as GeometryType);
+		const geometryFormat = getGeometryFormatForType(props.type)!;
 
+		const mapboxKey = getSetting('mapbox_key');
 		const basemaps = getBasemapSources();
 		const appStore = useAppStore();
 		const { basemap } = toRefs(appStore);
@@ -169,6 +172,8 @@ export default defineComponent({
 			geometryOptionsError.value = error;
 		}
 
+		const selection = ref<GeoJSON.Feature[]>([]);
+
 		const location = ref<LngLatLike | null>();
 		const projection = ref<{ x: number; y: number } | null>();
 		function updateProjection() {
@@ -176,9 +181,8 @@ export default defineComponent({
 		}
 		watch(location, updateProjection);
 
-		const mapboxKey = getSetting('mapbox_key');
-
 		const controls = {
+			attribution: new AttributionControl(),
 			draw: new MapboxDraw(getDrawOptions(geometryType)),
 			fitData: new ButtonControl('mapboxgl-ctrl-fitdata', fitDataBounds),
 			navigation: new NavigationControl({
@@ -187,15 +191,18 @@ export default defineComponent({
 			geolocate: new GeolocateControl({
 				showUserLocation: false,
 			}),
-			geocoder: !mapboxKey
-				? null
-				: (new MapboxGeocoder({
-						accessToken: mapboxKey,
-						collapsed: true,
-						flyTo: { speed: 1.4 },
-						marker: false,
-				  }) as any),
+			geocoder: undefined as MapboxGeocoder | undefined,
 		};
+		if (mapboxKey) {
+			controls.geocoder = new MapboxGeocoder({
+				accessToken: mapboxKey,
+				collapsed: true,
+				flyTo: { speed: 1.4 },
+				marker: false,
+				mapboxgl: maplibre as any,
+				placeholder: t('layouts.map.find_location'),
+			});
+		}
 
 		const tooltipVisible = ref(false);
 		const tooltipMessage = ref('');
@@ -238,20 +245,21 @@ export default defineComponent({
 			basemap,
 			location,
 			projection,
+			selection,
 		};
 
 		function setupMap(): () => void {
 			map = new Map({
 				container: container.value!,
 				style: style.value,
-				attributionControl: false,
 				dragRotate: false,
-				logoPosition: 'bottom-right',
+				logoPosition: 'bottom-left',
+				attributionControl: false,
 				...props.defaultView,
 				...(mapboxKey ? { accessToken: mapboxKey } : {}),
 			});
 			if (controls.geocoder) {
-				map.addControl(controls.geocoder, 'top-right');
+				map.addControl(controls.geocoder as any, 'top-right');
 				controls.geocoder.on('result', (event: any) => {
 					location.value = event.result.center;
 				});
@@ -263,6 +271,7 @@ export default defineComponent({
 				const { longitude, latitude } = event.coords;
 				location.value = [longitude, latitude];
 			});
+			map.addControl(controls.attribution, 'bottom-left');
 			map.addControl(controls.navigation, 'top-left');
 			map.addControl(controls.geolocate, 'top-left');
 			map.addControl(controls.fitData, 'top-left');
@@ -275,6 +284,7 @@ export default defineComponent({
 				map.on('draw.delete', handleDrawUpdate);
 				map.on('draw.update', handleDrawUpdate);
 				map.on('draw.modechange', handleDrawModeChange);
+				map.on('draw.selectionchange', handleSelectionChange);
 				map.on('move', updateProjection);
 				for (const layer of activeLayers) {
 					map.on('mousedown', layer, hideTooltip);
@@ -329,7 +339,8 @@ export default defineComponent({
 
 		function fitDataBounds(options: CameraOptions & AnimationOptions) {
 			if (map && currentGeometry) {
-				map.fitBounds(currentGeometry.bbox! as LngLatBoundsLike, {
+				const bbox = getBBox(currentGeometry);
+				map.fitBounds(bbox as LngLatBoundsLike, {
 					padding: 80,
 					maxZoom: 8,
 					...options,
@@ -339,7 +350,7 @@ export default defineComponent({
 
 		function getDrawOptions(type: GeometryType): any {
 			const options = {
-				styles: drawLayers,
+				styles: getMapStyle(),
 				controls: {},
 				userProperties: true,
 				displayControlsDefault: false,
@@ -425,7 +436,6 @@ export default defineComponent({
 			} else {
 				result = geometries[geometries.length - 1];
 			}
-			result!.bbox = getBBox(result!);
 			return result;
 		}
 
@@ -435,6 +445,10 @@ export default defineComponent({
 					controls.draw.delete(feature.id as string);
 				}
 			}
+		}
+
+		function handleSelectionChange(event: any) {
+			selection.value = event.features;
 		}
 
 		function handleDrawUpdate() {
@@ -447,7 +461,7 @@ export default defineComponent({
 			}
 		}
 
-		function handleKeyDown(event) {
+		function handleKeyDown(event: any) {
 			if ([8, 46].includes(event.keyCode)) {
 				controls.draw.trash();
 			}
@@ -477,6 +491,10 @@ export default defineComponent({
 			width: 100%;
 			height: 100%;
 		}
+
+		&:not(.has-selection) :deep(.mapbox-gl-draw_trash) {
+			display: none;
+		}
 	}
 
 	.v-info {
@@ -488,8 +506,8 @@ export default defineComponent({
 
 	.basemap-select {
 		position: absolute;
+		right: 10px;
 		bottom: 10px;
-		left: 10px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -528,13 +546,13 @@ export default defineComponent({
 	pointer-events: none;
 }
 
-:deep(.fade-enter-active),
-:deep(.fade-leave-active) {
+.fade-enter-active,
+.fade-leave-active {
 	transition: opacity var(--medium) var(--transition);
 }
 
-:deep(.fade-enter-from),
-:deep(.fade-leave-to) {
+.fade-enter-from,
+.fade-leave-to {
 	opacity: 0;
 }
 </style>

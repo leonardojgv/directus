@@ -51,29 +51,7 @@
 					v-model="onDeleteRelated"
 					:disabled="collection === relatedCollection"
 					:placeholder="t('choose_action') + '...'"
-					:items="[
-						{
-							text: t('referential_action_set_null', { field: currentField }),
-							value: 'SET NULL',
-						},
-						{
-							text: t('referential_action_set_default', { field: currentField }),
-							value: 'SET DEFAULT',
-						},
-						{
-							text: t('referential_action_cascade', {
-								collection: collection,
-								field: currentField,
-							}),
-							value: 'CASCADE',
-						},
-						{
-							text: t('referential_action_no_action', {
-								field: currentField,
-							}),
-							value: 'NO ACTION',
-						},
-					]"
+					:items="onDeleteOptions"
 				/>
 			</div>
 		</div>
@@ -110,6 +88,7 @@ export default defineComponent({
 
 		const relatedCollection = syncFieldDetailStoreProperty('relations.m2o.related_collection');
 		const correspondingField = syncFieldDetailStoreProperty('fields.corresponding');
+		const correspondingFieldKey = syncFieldDetailStoreProperty('fields.corresponding.field');
 		const onDeleteRelated = syncFieldDetailStoreProperty('relations.m2o.schema.on_delete');
 
 		const { field, collection, editing, generationInfo } = storeToRefs(fieldDetailStore);
@@ -151,18 +130,29 @@ export default defineComponent({
 			return t('add_field_related');
 		});
 
-		const correspondingFieldKey = computed({
-			get() {
-				return correspondingField.value?.field;
-			},
-			set(key: string | undefined) {
-				if (!hasCorresponding.value) {
-					hasCorresponding.value = true;
-				}
-
-				correspondingField.value!.field = key;
-			},
-		});
+		const onDeleteOptions = computed(() =>
+			[
+				{
+					text: t('referential_action_set_null', { field: currentField.value }),
+					value: 'SET NULL',
+				},
+				{
+					text: t('referential_action_set_default', { field: currentField.value }),
+					value: 'SET DEFAULT',
+				},
+				{
+					text: t('referential_action_cascade', {
+						collection: collection.value,
+						field: currentField.value,
+					}),
+					value: 'CASCADE',
+				},
+				{
+					text: t('referential_action_no_action', { field: currentField.value }),
+					value: 'NO ACTION',
+				},
+			].filter((o) => !(o.value === 'SET NULL' && field.value.schema?.is_nullable === false))
+		);
 
 		return {
 			t,
@@ -176,6 +166,7 @@ export default defineComponent({
 			correspondingFieldKey,
 			generationInfo,
 			onDeleteRelated,
+			onDeleteOptions,
 		};
 	},
 });

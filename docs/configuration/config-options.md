@@ -30,6 +30,7 @@ If the config path has no file extension, or a file extension that's not one of 
 will try reading the file config path as environment variables. This has the following structure:
 
 ```
+HOST="0.0.0.0"
 PORT=8055
 
 DB_CLIENT="pg"
@@ -50,6 +51,7 @@ CONFIG_PATH="/path/to/config.json"
 
 ```json
 {
+	"HOST": "0.0.0.0",
 	"PORT": 8055,
 
 	"DB_CLIENT": "pg",
@@ -69,6 +71,7 @@ CONFIG_PATH="/path/to/config.yaml"
 ```
 
 ```yaml
+HOST: 0.0.0.0
 PORT: 8055
 
 DB_CLIENT: pg
@@ -88,6 +91,7 @@ the environment variable name:
 // Object Sytax
 
 module.exports = {
+	HOST: '0.0.0.0',
 	PORT: 8055,
 
 	DB_CLIENT: 'pg',
@@ -106,6 +110,7 @@ parameter.
 
 module.exports = function (env) {
 	return {
+		HOST: '0.0.0.0',
 		PORT: 8055,
 
 		DB_CLIENT: 'pg',
@@ -183,6 +188,7 @@ prefixing the value with `{type}:`. The following types are available:
 | Variable                   | Description                                                                                                | Default Value |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------- |
 | `CONFIG_PATH`              | Where your config file is located. See [Configuration Files](#configuration-files)                         | `.env`        |
+| `HOST`                     | IP or host the API listens on.                                                                             | `0.0.0.0`     |
 | `PORT`                     | What port to run the API under.                                                                            | `8055`        |
 | `PUBLIC_URL`<sup>[1]</sup> | URL where your API can be reached on the web.                                                              | `/`           |
 | `LOG_LEVEL`                | What level of detail to log. One of `fatal`, `error`, `warn`, `info`, `debug`, `trace` or `silent`.        | `info`        |
@@ -194,21 +200,52 @@ prefixing the value with `{type}:`. The following types are available:
 <sup>[1]</sup> The PUBLIC_URL value is used for things like OAuth redirects, forgot-password emails, and logos that
 needs to be publicly available on the internet.
 
+::: tip Additional Logger Variables
+
+All `LOGGER_*` environment variables are passed to the `options` configuration of a
+[`Pino` instance](https://github.com/pinojs/pino/blob/master/docs/api.md#options). All `LOGGER_HTTP*` environment
+variables are passed to the `options` configuration of a
+[`Pino-http` instance](https://github.com/pinojs/pino-http#api). Based on your project's needs, you can extend the
+`LOGGER_*` environment variables with any config you need to pass to the logger instance. If a LOGGER_LEVELS key is
+added, these values will be passed to the logger formatter, as described
+[here](https://github.com/pinojs/pino/blob/master/docs/help.md#mapping-pino-log-levels-to-google-cloud-logging-stackdriver-serverity-levels)
+for example. The format for adding LEVELS values is:
+`LOGGER_LEVELS="trace:DEBUG,debug:DEBUG,info:INFO,warn:WARNING,error:ERROR,fatal:CRITICAL"`
+
+:::
+
+## Server
+
+| Variable                    | Description                                        | Default Value                                                                                                |
+| --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `SERVER_KEEP_ALIVE_TIMEOUT` | Timeout in milliseconds for socket to be destroyed | [server.keepAliveTimeout](https://github.com/nodejs/node/blob/master/doc/api/http.md#serverkeepalivetimeout) |
+| `SERVER_HEADERS_TIMEOUT`    | Timeout in milliseconds to parse HTTP headers      | [server.headersTimeout](https://github.com/nodejs/node/blob/master/doc/api/http.md#serverheaderstimeout)     |
+
+::: tip Additional Server Variables
+
+All `SERVER_*` environment variables are merged with `server` instance properties created from
+[http.Server](https://github.com/nodejs/node/blob/master/doc/api/http.md#class-httpserver). This allows to configure
+server behind a proxy, a load balancer, etc. Be careful to not override methods of this instance otherwise you may incur
+into unexpected behaviors.
+
+:::
+
 ## Database
 
-| Variable               | Description                                                                                                                                        | Default Value     |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| `DB_CLIENT`            | **Required**. What database client to use. One of `pg` or `postgres`, `mysql`, `oracledb`, `mssql`, or `sqlite3`.                                  | --                |
-| `DB_HOST`              | Database host. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                |
-| `DB_PORT`              | Database port. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                |
-| `DB_DATABASE`          | Database name. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                |
-| `DB_USER`              | Database user. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                |
-| `DB_PASSWORD`          | Database user's password. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                           | --                |
-| `DB_FILENAME`          | Where to read/write the SQLite database. **Required** when using `sqlite3`.                                                                        | --                |
-| `DB_CONNECTION_STRING` | When using `pg`, you can submit a connection string instead of individual properties. Using this will ignore any of the other connection settings. | --                |
-| `DB_POOL_*`            | Pooling settings. Passed on to [the `tarn.js`](https://github.com/vincit/tarn.js#usage) library.                                                   | --                |
-| `DB_EXCLUDE_TABLES`    | CSV of tables you want Directus to ignore completely                                                                                               | `spatial_ref_sys` |
-| `DB_CHARSET`           | Charset/collation to use in the connection to MySQL/MariaDB                                                                                        | `UTF8_GENERAL_CI` |
+| Variable               | Description                                                                                                                                        | Default Value                 |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `DB_CLIENT`            | **Required**. What database client to use. One of `pg` or `postgres`, `mysql`, `oracledb`, `mssql`, `sqlite3`, `cockroachdb`.                      | --                            |
+| `DB_HOST`              | Database host. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                            |
+| `DB_PORT`              | Database port. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                            |
+| `DB_DATABASE`          | Database name. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                            |
+| `DB_USER`              | Database user. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                                      | --                            |
+| `DB_PASSWORD`          | Database user's password. **Required** when using `pg`, `mysql`, `oracledb`, or `mssql`.                                                           | --                            |
+| `DB_FILENAME`          | Where to read/write the SQLite database. **Required** when using `sqlite3`.                                                                        | --                            |
+| `DB_CONNECTION_STRING` | When using `pg`, you can submit a connection string instead of individual properties. Using this will ignore any of the other connection settings. | --                            |
+| `DB_POOL_*`            | Pooling settings. Passed on to [the `tarn.js`](https://github.com/vincit/tarn.js#usage) library.                                                   | --                            |
+| `DB_EXCLUDE_TABLES`    | CSV of tables you want Directus to ignore completely                                                                                               | `spatial_ref_sys,sysdiagrams` |
+| `DB_CHARSET`           | Charset/collation to use in the connection to MySQL/MariaDB                                                                                        | `UTF8_GENERAL_CI`             |
+| `DB_VERSION`           | Database version, in case you use the PostgreSQL adapter to connect a non-standard database. Not normally required.                                | --                            |
 
 ::: tip Additional Database Variables
 
@@ -227,18 +264,23 @@ All the `DB_POOL_` prefixed options are passed to [`tarn.js`](https://github.com
 
 ## Security
 
-| Variable                         | Description                                                                                                            | Default Value            |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| `KEY`                            | Unique identifier for the project.                                                                                     | --                       |
-| `SECRET`                         | Secret string for the project.                                                                                         | --                       |
-| `ACCESS_TOKEN_TTL`               | The duration that the access token is valid.                                                                           | `15m`                    |
-| `REFRESH_TOKEN_TTL`              | The duration that the refresh token is valid, and also how long users stay logged-in to the App.                       | `7d`                     |
-| `REFRESH_TOKEN_COOKIE_DOMAIN`    | Which domain to use for the refresh cookie. Useful for development mode.                                               | --                       |
-| `REFRESH_TOKEN_COOKIE_SECURE`    | Whether or not to use a secure cookie for the refresh token in cookie mode.                                            | `false`                  |
-| `REFRESH_TOKEN_COOKIE_SAME_SITE` | Value for `sameSite` in the refresh token cookie when in cookie mode.                                                  | `lax`                    |
-| `REFRESH_TOKEN_COOKIE_NAME`      | Name of refresh token cookie .                                                                                         | `directus_refresh_token` |
-| `PASSWORD_RESET_URL_ALLOW_LIST`  | List of URLs that can be used [as `reset_url` in /password/request](/reference/authentication/#request-password-reset) | --                       |
-| `USER_INVITE_URL_ALLOW_LIST`     | List of URLs that can be used [as `invite_url` in /users/invite](/reference/system/users/#invite-a-new-user)           | --                       |
+| Variable                         | Description                                                                                                                                                      | Default Value            |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `KEY`                            | Unique identifier for the project.                                                                                                                               | --                       |
+| `SECRET`                         | Secret string for the project.                                                                                                                                   | --                       |
+| `ACCESS_TOKEN_TTL`               | The duration that the access token is valid.                                                                                                                     | `15m`                    |
+| `REFRESH_TOKEN_TTL`              | The duration that the refresh token is valid, and also how long users stay logged-in to the App.                                                                 | `7d`                     |
+| `REFRESH_TOKEN_COOKIE_DOMAIN`    | Which domain to use for the refresh cookie. Useful for development mode.                                                                                         | --                       |
+| `REFRESH_TOKEN_COOKIE_SECURE`    | Whether or not to use a secure cookie for the refresh token in cookie mode.                                                                                      | `false`                  |
+| `REFRESH_TOKEN_COOKIE_SAME_SITE` | Value for `sameSite` in the refresh token cookie when in cookie mode.                                                                                            | `lax`                    |
+| `REFRESH_TOKEN_COOKIE_NAME`      | Name of refresh token cookie .                                                                                                                                   | `directus_refresh_token` |
+| `PASSWORD_RESET_URL_ALLOW_LIST`  | List of URLs that can be used [as `reset_url` in /password/request](/reference/authentication/#request-password-reset)                                           | --                       |
+| `USER_INVITE_URL_ALLOW_LIST`     | List of URLs that can be used [as `invite_url` in /users/invite](/reference/system/users/#invite-a-new-user)                                                     | --                       |
+| `IP_TRUST_PROXY`                 | Settings for [express' trust proxy setting](https://expressjs.com/en/guide/behind-proxies.html)                                                                  | true                     |
+| `IP_CUSTOM_HEADER`               | What custom request header to use for the IP address                                                                                                             | false                    |
+| `CONTENT_SECURITY_POLICY`        | Custom overrides for the Content-Security-Policy header. See [helmet's documentation](https://helmetjs.github.io) for more information.                          | --                       |
+| `ASSETS_CONTENT_SECURITY_POLICY` | Custom overrides for the Content-Security-Policy header for the /assets endpoint. See [helmet's documentation](https://helmetjs.github.io) for more information. | --                       |
+| `IMPORT_IP_DENY_LIST`            | Deny importing files from these IP addresses. Use `0.0.0.0` for any local IP address                                                                             | `0.0.0.0`                |
 
 ::: tip Cookie Strictness
 
@@ -278,8 +320,8 @@ multiplied. This may cause out of memory errors, especially when running in cont
 
 | Variable               | Description                                                                                                                                            | Default Value                |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
-| `CORS_ENABLED`         | Whether or not to enable the CORS headers.                                                                                                             | `true`                       |
-| `CORS_ORIGIN`          | Value for the `Access-Control-Allow-Origin` header. Use `true` to match the Origin header, or provide a domain or a CSV of domains for specific access | `true`                       |
+| `CORS_ENABLED`         | Whether or not to enable the CORS headers.                                                                                                             | `false`                      |
+| `CORS_ORIGIN`          | Value for the `Access-Control-Allow-Origin` header. Use `true` to match the Origin header, or provide a domain or a CSV of domains for specific access | `false`                      |
 | `CORS_METHODS`         | Value for the `Access-Control-Allow-Methods` header.                                                                                                   | `GET,POST,PATCH,DELETE`      |
 | `CORS_ALLOWED_HEADERS` | Value for the `Access-Control-Allow-Headers` header.                                                                                                   | `Content-Type,Authorization` |
 | `CORS_EXPOSED_HEADERS` | Value for the `Access-Control-Expose-Headers` header.                                                                                                  | `Content-Range`              |
@@ -359,8 +401,8 @@ RATE_LIMITER_REDIS="redis://@127.0.0.1"
 ## Cache
 
 Directus has a built-in data-caching option. Enabling this will cache the output of requests (based on the current user
-and exact query parameters used) into to configured cache storage location. This drastically improves API performance,
-as subsequent requests are served straight from this cache. Enabling cache will also make Directus return accurate
+and exact query parameters used) into configured cache storage location. This drastically improves API performance, as
+subsequent requests are served straight from this cache. Enabling cache will also make Directus return accurate
 cache-control headers. Depending on your setup, this will further improve performance by caching the request in
 middleman servers (like CDNs) and even the browser.
 
@@ -371,15 +413,16 @@ often possible to cache assets for far longer than you would cache database cont
 
 :::
 
-| Variable                         | Description                                                                                  | Default Value    |
-| -------------------------------- | -------------------------------------------------------------------------------------------- | ---------------- |
-| `CACHE_ENABLED`                  | Whether or not caching is enabled.                                                           | `false`          |
-| `CACHE_TTL`<sup>[1]</sup>        | How long the cache is persisted.                                                             | `30m`            |
-| `CACHE_CONTROL_S_MAXAGE`         | Whether to not to add the `s-maxage` expiration flag. Set to a number for a custom value     | `0`              |
-| `CACHE_AUTO_PURGE`<sup>[2]</sup> | Automatically purge the cache on `create`, `update`, and `delete` actions.                   | `false`          |
-| `CACHE_SCHEMA`<sup>[3]</sup>     | Whether or not the database schema is cached. One of `false`, `true`, or a string time value | `true`           |
-| `CACHE_NAMESPACE`                | How to scope the cache data.                                                                 | `directus-cache` |
-| `CACHE_STORE`<sup>[4]</sup>      | Where to store the cache data. Either `memory`, `redis`, or `memcache`.                      | `memory`         |
+| Variable                          | Description                                                                              | Default Value    |
+| --------------------------------- | ---------------------------------------------------------------------------------------- | ---------------- |
+| `CACHE_ENABLED`                   | Whether or not caching is enabled.                                                       | `false`          |
+| `CACHE_TTL`<sup>[1]</sup>         | How long the cache is persisted.                                                         | `30m`            |
+| `CACHE_CONTROL_S_MAXAGE`          | Whether to not to add the `s-maxage` expiration flag. Set to a number for a custom value | `0`              |
+| `CACHE_AUTO_PURGE`<sup>[2]</sup>  | Automatically purge the cache on `create`, `update`, and `delete` actions.               | `false`          |
+| `CACHE_SCHEMA`<sup>[3]</sup>      | Whether or not the database schema is cached. One of `false`, `true`                     | `true`           |
+| `CACHE_PERMISSIONS`<sup>[3]</sup> | Whether or not the user permissions are cached. One of `false`, `true`                   | `true`           |
+| `CACHE_NAMESPACE`                 | How to scope the cache data.                                                             | `directus-cache` |
+| `CACHE_STORE`<sup>[4]</sup>       | Where to store the cache data. Either `memory`, `redis`, or `memcache`.                  | `memory`         |
 
 <sup>[1]</sup> `CACHE_TTL` Based on your project's needs, you might be able to aggressively cache your data, only
 requiring new data to be fetched every hour or so. This allows you to squeeze the most performance out of your Directus
@@ -390,7 +433,7 @@ so you configure it using human readable values (like `2 days`, `7 hrs`, `5m`).
 <sup>[2]</sup> `CACHE_AUTO_PURGE` allows you to keep the Directus API real-time, while still getting the performance
 benefits on quick subsequent reads.
 
-<sup>[3]</sup> `CACHE_SCHEMA` ignores the `CACHE_ENABLED` value.
+<sup>[3]</sup> Not affected by the `CACHE_ENABLED` value.
 
 <sup>[4]</sup> `CACHE_STORE` For larger projects, you most likely don't want to rely on local memory for caching.
 Instead, you can use the above `CACHE_STORE` environment variable to use either `memcache` or `redis` as the cache
@@ -435,6 +478,25 @@ If you don't provide any configuration for storage adapters, this default will b
 ```
 STORAGE_LOCATIONS="local"
 STORAGE_LOCAL_ROOT="./uploads"
+```
+
+:::
+
+::: warning Case sensitivity
+
+The location value(s) you specify should be capitalized when specifying the additional configuration values. For
+example, this will not work:
+
+```
+STORAGE_LOCATIONS="s3"
+STORAGE_s3_DRIVER="s3" # Will not work, lowercase "s3" ❌
+```
+
+but this will work:
+
+```
+STORAGE_LOCATIONS="s3"
+STORAGE_S3_DRIVER="s3" # Will work, "s3" is uppercased ✅
 ```
 
 :::
@@ -503,21 +565,23 @@ STORAGE_AWS_BUCKET="my-files"
 
 ## Assets
 
-| Variable                               | Description                                                                                                | Default Value |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------- |
-| `ASSETS_CACHE_TTL`                     | How long assets will be cached for in the browser. Sets the `max-age` value of the `Cache-Control` header. | `30m`         |
-| `ASSETS_TRANSFORM_MAX_CONCURRENT`      | How many file transformations can be done simultaneously                                                   | `4`           |
-| `ASSETS_TRANSFORM_IMAGE_MAX_DIMENSION` | The max pixel dimensions size (width/height) that is allowed to be transformed                             | `6000`        |
-| `ASSETS_TRANSFORM_MAX_OPERATIONS`      | The max number of transform operations that is allowed to be processed (excludes saved presets)            | `5`           |
+| Variable                               | Description                                                                                                                             | Default Value |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `ASSETS_CACHE_TTL`                     | How long assets will be cached for in the browser. Sets the `max-age` value of the `Cache-Control` header.                              | `30m`         |
+| `ASSETS_TRANSFORM_MAX_CONCURRENT`      | How many file transformations can be done simultaneously                                                                                | `4`           |
+| `ASSETS_TRANSFORM_IMAGE_MAX_DIMENSION` | The max pixel dimensions size (width/height) that is allowed to be transformed                                                          | `6000`        |
+| `ASSETS_TRANSFORM_MAX_OPERATIONS`      | The max number of transform operations that is allowed to be processed (excludes saved presets)                                         | `5`           |
+| `ASSETS_CONTENT_SECURITY_POLICY`       | Custom overrides for the Content-Security-Policy header. See [helmet's documentation](https://helmetjs.github.io) for more information. | --            |
 
 Image transformations can be fairly heavy on memory usage. If you're using a system with 1GB or less available memory,
 we recommend lowering the allowed concurrent transformations to prevent you from overflowing your server.
 
 ## Authentication
 
-| Variable         | Description                            | Default Value |
-| ---------------- | -------------------------------------- | ------------- |
-| `AUTH_PROVIDERS` | CSV of auth providers you want to use. | --            |
+| Variable               | Description                            | Default Value |
+| ---------------------- | -------------------------------------- | ------------- |
+| `AUTH_PROVIDERS`       | CSV of auth providers you want to use. | --            |
+| `AUTH_DISABLE_DEFAULT` | Disable the default auth provider      | `false`       |
 
 For each of the auth providers you list, you must provide the following configuration:
 
@@ -543,6 +607,7 @@ For example, you can login to Directus using a github account by creating an
 ```
 AUTH_PROVIDERS="github"
 
+AUTH_GITHUB_DRIVER="oauth2"
 AUTH_GITHUB_CLIENT_ID="99d3...c3c4"
 AUTH_GITHUB_CLIENT_SECRET="34ae...f963"
 AUTH_GITHUB_AUTHORIZE_URL="https://github.com/login/oauth/authorize"
@@ -558,19 +623,20 @@ These flows rely on the `PUBLIC_URL` variable for redirecting. Make sure that va
 
 #### OAuth 2.0
 
-| Variable                                    | Description                                                                        | Default Value    |
-| ------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------- |
-| `AUTH_<PROVIDER>_CLIENT_ID`                 | OAuth identifier for the external service.                                         | --               |
-| `AUTH_<PROVIDER>_CLIENT_SECRET`             | OAuth secret for the external service.                                             | --               |
-| `AUTH_<PROVIDER>_SCOPE`                     | A white-space separated list of privileges Directus will request.                  | `email`          |
-| `AUTH_<PROVIDER>_AUTHORIZE_URL`             | The authorize page URL of the external service.                                    | --               |
-| `AUTH_<PROVIDER>_ACCESS_URL`                | The token access URL of the external service.                                      | --               |
-| `AUTH_<PROVIDER>_PROFILE_URL`               | The user profile information URL of the external service.                          | --               |
-| `AUTH_<PROVIDER>_EMAIL_KEY`                 | OAuth profile email key used to find the email address.                            | `email`          |
-| `AUTH_<PROVIDER>_IDENTIFIER_KEY`            | OAuth profile identifier key used to verify the user. Will default to `EMAIL_KEY`. | --               |
-| `AUTH_<PROVIDER>_ALLOW_PUBLIC_REGISTRATION` | Automatically create accounts for authenticating users.                            | `false`          |
-| `AUTH_<PROVIDER>_DEFAULT_ROLE_ID`           | The Directus role ID assigned to created users.                                    | --               |
-| `AUTH_<PROVIDER>_ICON`                      | SVG icon to display with the login link.                                           | `account_circle` |
+| Variable                                    | Description                                                                                                                        | Default Value    |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `AUTH_<PROVIDER>_CLIENT_ID`                 | OAuth identifier for the external service.                                                                                         | --               |
+| `AUTH_<PROVIDER>_CLIENT_SECRET`             | OAuth secret for the external service.                                                                                             | --               |
+| `AUTH_<PROVIDER>_SCOPE`                     | A white-space separated list of privileges Directus will request.                                                                  | `email`          |
+| `AUTH_<PROVIDER>_AUTHORIZE_URL`             | The authorize page URL of the external service.                                                                                    | --               |
+| `AUTH_<PROVIDER>_ACCESS_URL`                | The token access URL of the external service.                                                                                      | --               |
+| `AUTH_<PROVIDER>_PROFILE_URL`               | The user profile information URL of the external service.                                                                          | --               |
+| `AUTH_<PROVIDER>_EMAIL_KEY`                 | OAuth profile email key used to find the email address.                                                                            | `email`          |
+| `AUTH_<PROVIDER>_IDENTIFIER_KEY`            | OAuth profile identifier key used to verify the user. Will default to `EMAIL_KEY`.                                                 | --               |
+| `AUTH_<PROVIDER>_ALLOW_PUBLIC_REGISTRATION` | Automatically create accounts for authenticating users.                                                                            | `false`          |
+| `AUTH_<PROVIDER>_DEFAULT_ROLE_ID`           | The Directus role ID assigned to created users.                                                                                    | --               |
+| `AUTH_<PROVIDER>_ICON`                      | SVG icon to display with the login link. You can choose from [Social icon or Material icon set](/getting-started/glossary/#icons). | `account_circle` |
+| `AUTH_<PROVIDER>_PARAMS`                    | Custom parameters to send to the auth provider                                                                                     | --               |
 
 #### OpenID
 
@@ -578,34 +644,45 @@ OpenID is an authentication protocol built on OAuth 2.0, and should be preferred
 OpenID offers better user verification and consistent profile information, allowing for more complete user
 registrations.
 
-| Variable                                    | Description                                                       | Default Value          |
-| ------------------------------------------- | ----------------------------------------------------------------- | ---------------------- |
-| `AUTH_<PROVIDER>_CLIENT_ID`                 | OpenID identifier for the external service.                       | --                     |
-| `AUTH_<PROVIDER>_CLIENT_SECRET`             | OpenID secret for the external service.                           | --                     |
-| `AUTH_<PROVIDER>_SCOPE`                     | A white-space separated list of privileges Directus will request. | `openid profile email` |
-| `AUTH_<PROVIDER>_ISSUER_URL`                | The OpenID `.well-known` Discovery Document URL.                  | --                     |
-| `AUTH_<PROVIDER>_IDENTIFIER_KEY`            | OpenID profile identifier key used to verify the user.            | `sub`                  |
-| `AUTH_<PROVIDER>_ALLOW_PUBLIC_REGISTRATION` | Automatically create accounts for authenticating users.           | `false`                |
-| `AUTH_<PROVIDER>_REQUIRE_VERIFIED_EMAIL`    | Require users to have a verified email address.                   | `false`                |
-| `AUTH_<PROVIDER>_DEFAULT_ROLE_ID`           | The Directus role ID assigned to created users.                   | --                     |
-| `AUTH_<PROVIDER>_ICON`                      | SVG icon to display with the login link.                          | `account_circle`       |
+| Variable                                    | Description                                                                                                                        | Default Value          |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `AUTH_<PROVIDER>_CLIENT_ID`                 | OpenID identifier for the external service.                                                                                        | --                     |
+| `AUTH_<PROVIDER>_CLIENT_SECRET`             | OpenID secret for the external service.                                                                                            | --                     |
+| `AUTH_<PROVIDER>_SCOPE`                     | A white-space separated list of privileges Directus will request.                                                                  | `openid profile email` |
+| `AUTH_<PROVIDER>_ISSUER_URL`                | The OpenID `.well-known` Discovery Document URL.                                                                                   | --                     |
+| `AUTH_<PROVIDER>_IDENTIFIER_KEY`            | OpenID profile identifier key used to verify the user.                                                                             | `sub`                  |
+| `AUTH_<PROVIDER>_ALLOW_PUBLIC_REGISTRATION` | Automatically create accounts for authenticating users.                                                                            | `false`                |
+| `AUTH_<PROVIDER>_REQUIRE_VERIFIED_EMAIL`    | Require users to have a verified email address.                                                                                    | `false`                |
+| `AUTH_<PROVIDER>_DEFAULT_ROLE_ID`           | The Directus role ID assigned to created users.                                                                                    | --                     |
+| `AUTH_<PROVIDER>_ICON`                      | SVG icon to display with the login link. You can choose from [Social icon or Material icon set](/getting-started/glossary/#icons). | `account_circle`       |
+| `AUTH_<PROVIDER>_PARAMS`                    | Custom parameters to send to the auth provider                                                                                     | --                     |
 
 ### LDAP (`ldap`)
 
 LDAP allows Active Directory users to authenticate and use Directus without having to be manually configured. User
 information and roles will be assigned from Active Directory.
 
-| Variable                          | Description                                        | Default Value |
-| --------------------------------- | -------------------------------------------------- | ------------- |
-| `AUTH_<PROVIDER>_CLIENT_URL`      | LDAP connection URL.                               | --            |
-| `AUTH_<PROVIDER>_BIND_DN`         | Bind user <sup>[1]</sup> distinguished name.       | --            |
-| `AUTH_<PROVIDER>_BIND_PASSWORD`   | Bind user password.                                | --            |
-| `AUTH_<PROVIDER>_USER_DN`         | Directory path containing users.                   | --            |
-| `AUTH_<PROVIDER>_USER_ATTRIBUTE`  | Attribute to identify users by.                    | `cn`          |
-| `AUTH_<PROVIDER>_GROUP_DN`        | Directory path containing groups.                  | --            |
-| `AUTH_<PROVIDER>_GROUP_ATTRIBUTE` | Attribute to identify user as a member of a group. | `member`      |
+| Variable                          | Description                                                            | Default Value |
+| --------------------------------- | ---------------------------------------------------------------------- | ------------- |
+| `AUTH_<PROVIDER>_CLIENT_URL`      | LDAP connection URL.                                                   | --            |
+| `AUTH_<PROVIDER>_BIND_DN`         | Bind user <sup>[1]</sup> distinguished name.                           | --            |
+| `AUTH_<PROVIDER>_BIND_PASSWORD`   | Bind user password.                                                    | --            |
+| `AUTH_<PROVIDER>_USER_DN`         | Directory path containing users.                                       | --            |
+| `AUTH_<PROVIDER>_USER_ATTRIBUTE`  | Attribute to identify users by.                                        | `cn`          |
+| `AUTH_<PROVIDER>_USER_SCOPE`      | Scope of the user search, either `base`, `one`, `sub` <sup>[2]</sup>.  | `one`         |
+| `AUTH_<PROVIDER>_GROUP_DN`        | Directory path containing groups.                                      | --            |
+| `AUTH_<PROVIDER>_GROUP_ATTRIBUTE` | Attribute to identify user as a member of a group.                     | `member`      |
+| `AUTH_<PROVIDER>_GROUP_SCOPE`     | Scope of the group search, either `base`, `one`, `sub` <sup>[2]</sup>. | `one`         |
+| `AUTH_<PROVIDER>_MAIL_ATTRIBUTE`  | Attribute containing the email of the user.                            | `mail`        |
 
-<sup>[1]</sup> The bind user must have permission to query users and groups to perform authentication.
+<sup>[1]</sup> The bind user must have permission to query users and groups to perform authentication. To bind
+anonymously use `AUTH_LDAP_BIND_DN=""` and `AUTH_LDAP_BIND_PASSWORD=""`
+
+<sup>[2]</sup> The scope defines the following behaviors:
+
+- `base`: Limits the scope to a single object defined by the associated DN.
+- `one`: Searches all objects within the associated DN.
+- `sub`: Searches all objects and sub-objects within the associated DN.
 
 ### Example: LDAP
 
@@ -632,6 +709,7 @@ AUTH_GOOGLE_DRIVER="openid"
 AUTH_GOOGLE_CLIENT_ID="<google_application_id>"
 AUTH_GOOGLE_CLIENT_SECRET= "<google_application_secret_key>"
 AUTH_GOOGLE_ISSUER_URL="https://accounts.google.com"
+AUTH_GOOGLE_IDENTIFIER_KEY="email"
 AUTH_GOOGLE_ICON="google"
 
 AUTH_ADOBE_DRIVER="oauth2"
@@ -645,16 +723,17 @@ AUTH_ADOBE_ICON="adobe"
 
 ## Extensions
 
-| Variable          | Description                           | Default Value  |
-| ----------------- | ------------------------------------- | -------------- |
-| `EXTENSIONS_PATH` | Path to your local extensions folder. | `./extensions` |
+| Variable                 | Description                                             | Default Value  |
+| ------------------------ | ------------------------------------------------------- | -------------- |
+| `EXTENSIONS_PATH`        | Path to your local extensions folder.                   | `./extensions` |
+| `EXTENSIONS_AUTO_RELOAD` | Automatically reload extensions when they have changed. | `false`        |
 
 ## Email
 
-| Variable          | Description                                                       | Default Value          |
-| ----------------- | ----------------------------------------------------------------- | ---------------------- |
-| `EMAIL_FROM`      | Email address from which emails are sent.                         | `no-reply@directus.io` |
-| `EMAIL_TRANSPORT` | What to use to send emails. One of `sendmail`, `smtp`, `mailgun`. | `sendmail`             |
+| Variable          | Description                                                              | Default Value          |
+| ----------------- | ------------------------------------------------------------------------ | ---------------------- |
+| `EMAIL_FROM`      | Email address from which emails are sent.                                | `no-reply@directus.io` |
+| `EMAIL_TRANSPORT` | What to use to send emails. One of `sendmail`, `smtp`, `mailgun`, `ses`. | `sendmail`             |
 
 Based on the `EMAIL_TRANSPORT` used, you must also provide the following configurations:
 
@@ -685,6 +764,14 @@ Based on the `EMAIL_TRANSPORT` used, you must also provide the following configu
 | `EMAIL_MAILGUN_DOMAIN`  | A domain from [your Mailgun account](https://app.mailgun.com/app/sending/domains) | --                |
 | `EMAIL_MAILGUN_HOST`    | Allows you to specify a custom host.                                              | `api.mailgun.net` |
 
+### AWS SES (`ses`)
+
+| Variable                                   | Description                  | Default Value |
+| ------------------------------------------ | ---------------------------- | ------------- |
+| `EMAIL_SES_CREDENTIALS__ACCESS_KEY_ID`     | Your AWS SES access key. ID. | --            |
+| `EMAIL_SES_CREDENTIALS__SECRET_ACCESS_KEY` | Your AWS SES secret key.     | --            |
+| `EMAIL_SES_REGION`                         | Your AWS SES region.         | --            |
+
 ## Admin Account
 
 If you're relying on Docker and/or the `directus bootstrap` CLI command, you can pass the following two environment
@@ -704,3 +791,12 @@ environment variable:
 | Variable    | Description                                                       | Default Value |
 | ----------- | ----------------------------------------------------------------- | ------------- |
 | `TELEMETRY` | Allow Directus to collect anonymized data about your environment. | `true`        |
+
+## Limits & Optimizations
+
+Allows you to configure hard technical limits, to prevent abuse and optimize for your particular server environment.
+
+| Variable                | Description                                                                               | Default Value |
+| ----------------------- | ----------------------------------------------------------------------------------------- | ------------- |
+| `RELATIONAL_BATCH_SIZE` | How many rows are read into memory at a time when constructing nested relational datasets | 25000         |
+| `EXPORT_BATCH_SIZE`     | How many rows are read into memory at a time when constructing exports                    | 5000          |

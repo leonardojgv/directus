@@ -93,7 +93,6 @@ export default {
 </script>
 
 <style lang="stylus">
-/* stylelint-disable */
 @require '../styles/wrapper.styl'
 
 .page-edit
@@ -105,19 +104,19 @@ export default {
   .edit-link
     display inline-block
     a
-      color #A2B5CD
+      color var(--foreground-subdued)
       margin-right 0.25rem
     .icon.outbound
-      color #A2B5CD
+      color var(--foreground-subdued)
   .last-updated
     float right
     font-size 0.9em
     .prefix
       font-weight 500
-      color #A2B5CD
+      color var(--foreground-subdued)
     .time
       font-weight 400
-      color #a2b5cd
+      color var(--foreground-subdued)
 
 @media (max-width: $MQMobile)
   .page-edit

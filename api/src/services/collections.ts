@@ -1,16 +1,16 @@
 import SchemaInspector from '@directus/schema';
 import { Knex } from 'knex';
-import { getCache } from '../cache';
+import { getCache, clearSystemCache } from '../cache';
 import { ALIAS_TYPES } from '../constants';
 import getDatabase, { getSchemaInspector } from '../database';
 import { systemCollectionRows } from '../database/system-data/collections';
 import env from '../env';
 import { ForbiddenException, InvalidPayloadException } from '../exceptions';
 import { FieldsService } from '../services/fields';
-import { ItemsService, MutationOptions } from '../services/items';
+import { ItemsService } from '../services/items';
 import Keyv from 'keyv';
-import { AbstractServiceOptions, Collection, CollectionMeta, SchemaOverview } from '../types';
-import { Accountability, FieldMeta, RawField } from '@directus/shared/types';
+import { AbstractServiceOptions, Collection, CollectionMeta, MutationOptions } from '../types';
+import { Accountability, FieldMeta, RawField, SchemaOverview } from '@directus/shared/types';
 import { Table } from 'knex-schema-inspector/dist/types/table';
 
 export type RawCollection = {
@@ -26,7 +26,7 @@ export class CollectionsService {
 	schemaInspector: ReturnType<typeof SchemaInspector>;
 	schema: SchemaOverview;
 	cache: Keyv<any> | null;
-	schemaCache: Keyv<any> | null;
+	systemCache: Keyv<any>;
 
 	constructor(options: AbstractServiceOptions) {
 		this.knex = options.knex || getDatabase();
@@ -34,9 +34,9 @@ export class CollectionsService {
 		this.schemaInspector = options.knex ? SchemaInspector(options.knex) : getSchemaInspector();
 		this.schema = options.schema;
 
-		const { cache, schemaCache } = getCache();
+		const { cache, systemCache } = getCache();
 		this.cache = cache;
-		this.schemaCache = schemaCache;
+		this.systemCache = systemCache;
 	}
 
 	/**
@@ -67,28 +67,7 @@ export class CollectionsService {
 		// permission problems. This might not work reliably in MySQL, as it doesn't support DDL in
 		// transactions.
 		await this.knex.transaction(async (trx) => {
-			if (payload.meta) {
-				const collectionItemsService = new ItemsService('directus_collections', {
-					knex: trx,
-					accountability: this.accountability,
-					schema: this.schema,
-				});
-
-				await collectionItemsService.createOne({
-					...payload.meta,
-					collection: payload.collection,
-				});
-			}
-
 			if (payload.schema) {
-				const fieldsService = new FieldsService({ knex: trx, schema: this.schema });
-
-				const fieldItemsService = new ItemsService('directus_fields', {
-					knex: trx,
-					accountability: this.accountability,
-					schema: this.schema,
-				});
-
 				// Directus heavily relies on the primary key of a collection, so we have to make sure that
 				// every collection that is created has a primary key. If no primary key field is created
 				// while making the collection, we default to an auto incremented id named `id`
@@ -122,6 +101,8 @@ export class CollectionsService {
 					return field;
 				});
 
+				const fieldsService = new FieldsService({ knex: trx, schema: this.schema });
+
 				await trx.schema.createTable(payload.collection, (table) => {
 					for (const field of payload.fields!) {
 						if (field.type && ALIAS_TYPES.includes(field.type) === false) {
@@ -130,8 +111,27 @@ export class CollectionsService {
 					}
 				});
 
+				const fieldItemsService = new ItemsService('directus_fields', {
+					knex: trx,
+					accountability: this.accountability,
+					schema: this.schema,
+				});
+
 				const fieldPayloads = payload.fields!.filter((field) => field.meta).map((field) => field.meta) as FieldMeta[];
 				await fieldItemsService.createMany(fieldPayloads);
+			}
+
+			if (payload.meta) {
+				const collectionItemsService = new ItemsService('directus_collections', {
+					knex: trx,
+					accountability: this.accountability,
+					schema: this.schema,
+				});
+
+				await collectionItemsService.createOne({
+					...payload.meta,
+					collection: payload.collection,
+				});
 			}
 
 			return payload.collection;
@@ -141,9 +141,7 @@ export class CollectionsService {
 			await this.cache.clear();
 		}
 
-		if (this.schemaCache) {
-			await this.schemaCache.clear();
-		}
+		await clearSystemCache();
 
 		return payload.collection;
 	}
@@ -173,9 +171,7 @@ export class CollectionsService {
 			await this.cache.clear();
 		}
 
-		if (this.schemaCache) {
-			await this.schemaCache.clear();
-		}
+		await clearSystemCache();
 
 		return collections;
 	}
@@ -199,11 +195,27 @@ export class CollectionsService {
 		meta.push(...systemCollectionRows);
 
 		if (this.accountability && this.accountability.admin !== true) {
-			const collectionsYouHavePermissionToRead: string[] = this.schema.permissions
-				.filter((permission) => {
+			const collectionsGroups: { [key: string]: string } = meta.reduce(
+				(meta, item) => ({
+					...meta,
+					[item.collection]: item.group,
+				}),
+				{}
+			);
+
+			let collectionsYouHavePermissionToRead: string[] = this.accountability
+				.permissions!.filter((permission) => {
 					return permission.action === 'read';
 				})
 				.map(({ collection }) => collection);
+
+			for (const collection of collectionsYouHavePermissionToRead) {
+				const group = collectionsGroups[collection];
+				if (group) collectionsYouHavePermissionToRead.push(group);
+				delete collectionsGroups[collection];
+			}
+
+			collectionsYouHavePermissionToRead = [...new Set([...collectionsYouHavePermissionToRead])];
 
 			tablesInDatabase = tablesInDatabase.filter((table) => {
 				return collectionsYouHavePermissionToRead.includes(table.name);
@@ -258,7 +270,7 @@ export class CollectionsService {
 	 */
 	async readMany(collectionKeys: string[]): Promise<Collection[]> {
 		if (this.accountability && this.accountability.admin !== true) {
-			const permissions = this.schema.permissions.filter((permission) => {
+			const permissions = this.accountability.permissions!.filter((permission) => {
 				return permission.action === 'read' && collectionKeys.includes(permission.collection);
 			});
 
@@ -313,9 +325,7 @@ export class CollectionsService {
 			await this.cache.clear();
 		}
 
-		if (this.schemaCache) {
-			await this.schemaCache.clear();
-		}
+		await clearSystemCache();
 
 		return collectionKey;
 	}
@@ -344,9 +354,7 @@ export class CollectionsService {
 			await this.cache.clear();
 		}
 
-		if (this.schemaCache) {
-			await this.schemaCache.clear();
-		}
+		await clearSystemCache();
 
 		return collectionKeys;
 	}
@@ -369,6 +377,10 @@ export class CollectionsService {
 		}
 
 		await this.knex.transaction(async (trx) => {
+			if (collectionToBeDeleted!.schema) {
+				await trx.schema.dropTable(collectionKey);
+			}
+
 			// Make sure this collection isn't used as a group in any other collections
 			await trx('directus_collections').update({ group: null }).where({ group: collectionKey });
 
@@ -424,11 +436,11 @@ export class CollectionsService {
 					}
 				}
 
-				const m2aRelationsThatIncludeThisCollection = this.schema.relations.filter((relation) => {
+				const a2oRelationsThatIncludeThisCollection = this.schema.relations.filter((relation) => {
 					return relation.meta?.one_allowed_collections?.includes(collectionKey);
 				});
 
-				for (const relation of m2aRelationsThatIncludeThisCollection) {
+				for (const relation of a2oRelationsThatIncludeThisCollection) {
 					const newAllowedCollections = relation
 						.meta!.one_allowed_collections!.filter((collection) => collectionKey !== collection)
 						.join(',');
@@ -436,8 +448,6 @@ export class CollectionsService {
 						.update({ one_allowed_collections: newAllowedCollections })
 						.where({ id: relation.meta!.id });
 				}
-
-				await trx.schema.dropTable(collectionKey);
 			}
 		});
 
@@ -445,9 +455,7 @@ export class CollectionsService {
 			await this.cache.clear();
 		}
 
-		if (this.schemaCache) {
-			await this.schemaCache.clear();
-		}
+		await clearSystemCache();
 
 		return collectionKey;
 	}
@@ -476,9 +484,7 @@ export class CollectionsService {
 			await this.cache.clear();
 		}
 
-		if (this.schemaCache) {
-			await this.schemaCache.clear();
-		}
+		await clearSystemCache();
 
 		return collectionKeys;
 	}

@@ -1,5 +1,6 @@
 import { defineInterface } from '@directus/shared/utils';
 import InterfaceColor from './select-color.vue';
+import PreviewSVG from './preview.svg?raw';
 
 export default defineInterface({
 	id: 'select-color',
@@ -12,9 +13,21 @@ export default defineInterface({
 	group: 'selection',
 	options: [
 		{
+			field: 'opacity',
+			name: '$t:interfaces.select-color.opacity',
+			type: 'boolean',
+			meta: {
+				width: 'half',
+				interface: 'boolean',
+			},
+			schema: {
+				default_value: false,
+			},
+		},
+		{
 			field: 'presets',
 			name: '$t:interfaces.select-color.preset_colors',
-			type: 'string',
+			type: 'json',
 			meta: {
 				width: 'full',
 				interface: 'list',
@@ -48,4 +61,5 @@ export default defineInterface({
 			},
 		},
 	],
+	preview: PreviewSVG,
 });

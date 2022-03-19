@@ -15,42 +15,66 @@
 		:value="value"
 		:style="{ width }"
 		placeholder="--"
-		@input="emitValueDebounced($event.target.value)"
+		@input="emitValue($event.target.value)"
 	/>
 	<v-select
 		v-else-if="is === 'select'"
 		inline
 		:items="choices"
 		:model-value="value"
-		allow-other
 		:placeholder="t('select')"
-		@update:model-value="emitValueDebounced($event)"
+		allow-other
+		@update:model-value="emitValue($event)"
 	/>
+	<template v-else-if="is === 'interface-datetime'">
+		<input
+			ref="inputEl"
+			type="text"
+			:pattern="inputPattern"
+			:value="value"
+			:style="{ width }"
+			placeholder="--"
+			@input="emitValue($event.target.value)"
+		/>
+		<v-menu
+			ref="dateTimeMenu"
+			:close-on-content-click="false"
+			:show-arrow="true"
+			placement="bottom-start"
+			seamless
+			full-height
+		>
+			<template #activator="{ toggle }">
+				<v-icon class="preview" name="event" small @click="toggle" />
+			</template>
+			<div class="date-input">
+				<v-date-picker
+					:type="type"
+					:model-value="value"
+					@update:model-value="emitValue"
+					@close="dateTimeMenu?.deactivate"
+				/>
+			</div>
+		</v-menu>
+	</template>
 	<v-menu v-else :close-on-content-click="false" :show-arrow="true" placement="bottom-start">
 		<template #activator="{ toggle }">
 			<v-icon
-				v-if="type === 'geometry' || type === 'json'"
+				v-if="type.startsWith('geometry') || type === 'json'"
 				class="preview"
 				:name="type === 'json' ? 'integration_instructions' : 'map'"
+				small
 				@click="toggle"
 			/>
 			<div v-else class="preview" @click="toggle">{{ displayValue }}</div>
 		</template>
 		<div class="input" :class="type">
-			<component
-				:is="is"
-				class="input-component"
-				small
-				:type="type"
-				:value="value"
-				@input="emitValueDebounced($event)"
-			/>
+			<component :is="is" class="input-component" small :type="type" :value="value" @input="emitValue($event)" />
 		</div>
 	</v-menu>
 </template>
 
 <script lang="ts">
-import { debounce } from 'lodash';
 import { computed, defineComponent, PropType, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -88,6 +112,8 @@ export default defineComponent({
 		const inputEl = ref<HTMLElement>();
 		const { t } = useI18n();
 
+		const dateTimeMenu = ref();
+
 		const displayValue = computed(() => {
 			if (props.value === null) return null;
 			if (props.value === undefined) return null;
@@ -112,7 +138,7 @@ export default defineComponent({
 				case 'float':
 					return '[+-]?[0-9]+\\.?[0-9]*';
 				case 'uuid':
-					return '\\$CURRENT_USER|\\$CURRENT_ROLE|[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}';
+					return '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}';
 				default:
 					return '';
 			}
@@ -122,17 +148,22 @@ export default defineComponent({
 			if (props.focus) inputEl.value?.focus();
 		});
 
-		const emitValueDebounced = debounce((val: unknown) => emitValue(val), 250);
-
-		return { displayValue, width, t, emitValueDebounced, inputEl, inputPattern };
+		return { displayValue, width, t, emitValue, inputEl, inputPattern, dateTimeMenu };
 
 		function emitValue(val: unknown) {
 			if (val === '') {
-				emit('input', null);
-			} else {
-				if (typeof val !== 'string' || new RegExp(inputPattern.value).test(val)) {
-					emit('input', val);
-				}
+				return emit('input', null);
+			}
+
+			if (
+				typeof val === 'string' &&
+				['$NOW', '$CURRENT_USER', '$CURRENT_ROLE'].some((prefix) => val.startsWith(prefix))
+			) {
+				return emit('input', val);
+			}
+
+			if (typeof val !== 'string' || new RegExp(inputPattern.value).test(val)) {
+				return emit('input', val);
 			}
 		}
 	},
@@ -190,5 +221,9 @@ input {
 .dialog {
 	position: relative;
 	min-width: 800px;
+}
+
+.date-input {
+	min-width: 400px;
 }
 </style>

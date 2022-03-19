@@ -24,9 +24,6 @@ export default definePanel({
 			field: 'color',
 			name: '$t:color',
 			type: 'string',
-			schema: {
-				default_value: '#00C897',
-			},
 			meta: {
 				interface: 'select-color',
 				width: 'half',
@@ -47,7 +44,7 @@ export default definePanel({
 						},
 						{
 							text: 'Count (Distinct)',
-							value: 'count_distinct',
+							value: 'countDistinct',
 						},
 						{
 							text: 'Average',
@@ -55,7 +52,7 @@ export default definePanel({
 						},
 						{
 							text: 'Average (Distinct)',
-							value: 'avg_distinct',
+							value: 'avgDistinct',
 						},
 						{
 							text: 'Sum',
@@ -63,7 +60,7 @@ export default definePanel({
 						},
 						{
 							text: 'Sum (Distinct)',
-							value: 'sum_distinct',
+							value: 'sumDistinct',
 						},
 						{
 							text: 'Minimum',
@@ -244,6 +241,62 @@ export default definePanel({
 			},
 		},
 		{
+			field: 'curveType',
+			type: 'string',
+			name: '$t:panels.time_series.curve_type',
+			meta: {
+				interface: 'select-dropdown',
+				width: 'half',
+				options: {
+					choices: [
+						{
+							text: 'Smooth',
+							value: 'smooth',
+						},
+						{
+							text: 'Straight',
+							value: 'straight',
+						},
+						{
+							text: 'Stepline',
+							value: 'stepline',
+						},
+					],
+				},
+			},
+			schema: {
+				default_value: 'smooth',
+			},
+		},
+		{
+			field: 'fillType',
+			type: 'string',
+			name: '$t:panels.time_series.fill_type',
+			meta: {
+				interface: 'select-dropdown',
+				width: 'half',
+				options: {
+					choices: [
+						{
+							text: 'Gradient',
+							value: 'gradient',
+						},
+						{
+							text: 'Solid',
+							value: 'solid',
+						},
+						{
+							text: 'Disabled',
+							value: 'disabled',
+						},
+					],
+				},
+			},
+			schema: {
+				default_value: 'gradient',
+			},
+		},
+		{
 			field: 'filter',
 			type: 'json',
 			name: '$t:filter',
@@ -279,6 +332,6 @@ export default definePanel({
 			},
 		},
 	],
-	minWidth: 16,
-	minHeight: 8,
+	minWidth: 12,
+	minHeight: 6,
 });

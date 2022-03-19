@@ -11,7 +11,7 @@
 		<template #actions>
 			<collection-dialog v-model="collectionDialogActive">
 				<template #activator="{ on }">
-					<v-button v-tooltip.bottom="t('create_folder')" rounded icon class="add-folder" @click="on">
+					<v-button v-tooltip.bottom="t('create_folder')" rounded icon secondary @click="on">
 						<v-icon name="create_new_folder" />
 					</v-button>
 				</template>
@@ -27,7 +27,7 @@
 		</template>
 
 		<div class="padding-box">
-			<v-info v-if="collections.length === 0" type="warning" icon="box" :title="t('no_collections')">
+			<v-info v-if="collections.length === 0" icon="box" :title="t('no_collections')">
 				{{ t('no_collections_copy_admin') }}
 
 				<template #append>
@@ -64,16 +64,17 @@
 					v-tooltip="t('db_only_click_to_configure')"
 					class="collection-row hidden"
 					block
+					dense
 					clickable
 				>
 					<v-list-item-icon>
 						<v-icon name="add" />
 					</v-list-item-icon>
 
-					<div class="collection-name" @click="openCollection(collection)">
+					<router-link class="collection-name" :to="`/settings/data-model/${collection.collection}`">
 						<v-icon class="collection-icon" name="dns" />
 						<span class="collection-name">{{ collection.name }}</span>
-					</div>
+					</router-link>
 
 					<collection-options :collection="collection" />
 				</v-list-item>
@@ -127,7 +128,7 @@ export default defineComponent({
 		const { t } = useI18n();
 
 		const collectionDialogActive = ref(false);
-		const editCollection = ref<Collection>();
+		const editCollection = ref<Collection | null>();
 
 		const collectionsStore = useCollectionsStore();
 
@@ -203,7 +204,7 @@ export default defineComponent({
 						})
 					)
 				);
-			} catch (err) {
+			} catch (err: any) {
 				unexpectedError(err);
 			}
 		}
@@ -227,17 +228,12 @@ export default defineComponent({
 }
 
 .header-icon {
-	--v-button-color-disabled: var(--warning);
-	--v-button-background-color-disabled: var(--warning-10);
+	--v-button-color-disabled: var(--primary);
+	--v-button-background-color-disabled: var(--primary-10);
 }
 
 .collection-item.hidden {
 	--v-list-item-color: var(--foreground-subdued);
-}
-
-.collection-name {
-	flex-grow: 1;
-	font-family: var(--family-monospace);
 }
 
 .collection-icon {
@@ -259,13 +255,6 @@ export default defineComponent({
 			opacity: 0;
 		}
 	}
-}
-
-.add-folder {
-	--v-button-background-color: var(--primary-10);
-	--v-button-color: var(--primary);
-	--v-button-background-color-hover: var(--primary-25);
-	--v-button-color-hover: var(--primary);
 }
 
 .db-only {

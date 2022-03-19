@@ -15,11 +15,12 @@ const acceptedEnvTypes = ['string', 'number', 'regex', 'array'];
 const defaults: Record<string, any> = {
 	CONFIG_PATH: path.resolve(process.cwd(), '.env'),
 
+	HOST: '0.0.0.0',
 	PORT: 8055,
 	PUBLIC_URL: '/',
 	MAX_PAYLOAD_SIZE: '100kb',
 
-	DB_EXCLUDE_TABLES: 'spatial_ref_sys',
+	DB_EXCLUDE_TABLES: 'spatial_ref_sys,sysdiagrams',
 
 	STORAGE_LOCATIONS: 'local',
 	STORAGE_LOCAL_DRIVER: 'local',
@@ -38,8 +39,8 @@ const defaults: Record<string, any> = {
 
 	ROOT_REDIRECT: './admin',
 
-	CORS_ENABLED: true,
-	CORS_ORIGIN: true,
+	CORS_ENABLED: false,
+	CORS_ORIGIN: false,
 	CORS_METHODS: 'GET,POST,PATCH,DELETE',
 	CORS_ALLOWED_HEADERS: 'Content-Type,Authorization',
 	CORS_EXPOSED_HEADERS: 'Content-Range',
@@ -53,10 +54,13 @@ const defaults: Record<string, any> = {
 	CACHE_AUTO_PURGE: false,
 	CACHE_CONTROL_S_MAXAGE: '0',
 	CACHE_SCHEMA: true,
+	CACHE_PERMISSIONS: true,
 
 	AUTH_PROVIDERS: '',
+	AUTH_DISABLE_DEFAULT: false,
 
 	EXTENSIONS_PATH: './extensions',
+	EXTENSIONS_AUTO_RELOAD: false,
 
 	EMAIL_FROM: 'no-reply@directus.io',
 	EMAIL_TRANSPORT: 'sendmail',
@@ -70,12 +74,22 @@ const defaults: Record<string, any> = {
 	ASSETS_TRANSFORM_IMAGE_MAX_DIMENSION: 6000,
 	ASSETS_TRANSFORM_MAX_OPERATIONS: 5,
 
+	IP_TRUST_PROXY: true,
+	IP_CUSTOM_HEADER: false,
+
+	IMPORT_IP_DENY_LIST: '0.0.0.0',
+
 	SERVE_APP: true,
+
+	RELATIONAL_BATCH_SIZE: 25000,
+
+	EXPORT_BATCH_SIZE: 5000,
 };
 
 // Allows us to force certain environment variable into a type, instead of relying
 // on the auto-parsed type in processValues. ref #3705
 const typeMap: Record<string, string> = {
+	HOST: 'string',
 	PORT: 'string',
 
 	DB_NAME: 'string',
@@ -85,6 +99,7 @@ const typeMap: Record<string, string> = {
 	DB_PORT: 'number',
 
 	DB_EXCLUDE_TABLES: 'array',
+	IMPORT_IP_DENY_LIST: 'array',
 };
 
 let env: Record<string, any> = {

@@ -9,16 +9,18 @@
 ## Creating a User
 
 1. Navigate to the **User Library**
-2. Click the **Create User** action button in the header
+2. Click <span mi btn>add</span> in the header
 3. Enter an **Email Address**
 4. Optional: Complete the **other user form fields**
+5. Click <span mi btn>check</span> to save the user.
 
 ## Inviting a User
 
 1. Navigate to the **User Library**
-2. Click the **Invite Users** button in the header
+2. Click <span mi btn sec>person_add</span> in the header
 3. Enter **one or more email addresses**, separated by new lines, in the modal
-4. Click **Invite**
+4. Select the **Role** you want to assign to the user(s)
+5. Click **Invite**
 
 At this point the invited user(s) will receive an email with a link to the App where they set a password and enable
 their account.
@@ -46,7 +48,7 @@ The User Detail is only editable by the current user and admins, and the followi
 
 1. Navigate to the **User Library**
 2. Click the user you with to archive to go to their User Detail page
-3. Click the orange **Archive User** action button in the header
+3. Click on <span mi btn warn>archive</span> in the header
 4. Confirm this decision by clicking **Archive** in the dialog
 
 ::: warning Disables Access
@@ -59,7 +61,7 @@ Archiving uses _soft-delete_, therefore archived users are unable to access the 
 
 1. Navigate to the **User Library**
 2. Select one or more users you wish to delete
-3. Click the red **Delete User** action button in the header
+3. Click on <span mi btn dngr>delete</span> in the header
 4. Confirm this decision by clicking **Delete** in the dialog
 
 ::: danger Irreversible Change
@@ -71,11 +73,12 @@ undone. Please proceed with caution.
 
 ## Creating a Role
 
-1. Navigate to **Settings > Roles & Permissions**
-2. Click the **Create Role** action button in the header
+1. Navigate to **Settings <span mi icon dark>chevron_right</span> Roles & Permissions**
+2. Click <span mi btn>add</span> in the header
 3. Enter a unique **Role Name**
 4. Enabling **App Access** allows logging in to the App
 5. Enabling **Admin Access** gives full permission to project data and Settings
+6. Click on **Save** to save the role
 
 ## Configuring a Role
 
@@ -88,20 +91,19 @@ undone. Please proceed with caution.
 - **IP Access** — An allow-list of IP addresses from which the platform can be accessed, empty allows all
 - **Require 2FA** — Forces all users within this role to use two-factor authentication
 - **Users in Role** — A list of all users within this role
-- **Module Navigation** — Overrides the visible modules
-- **Collection Navigation** — Overrides the collection module's navigation
 
 ## Deleting a Role
 
-1. Navigate to **Settings > Roles & Permissions > [Role Name]**
-2. Click the red **Delete Role** action button in the header
+1. Navigate to **Settings <span mi icon dark>chevron_right</span> Roles & Permissions
+   <span mi icon dark>chevron_right</span> [Role Name]**
+2. Click <span mi btn dngr>delete</span> in the header
 3. Confirm this decision by clicking **Delete** in the dialog
 
 ::: warning Users in a Deleted Role
 
 If you delete a role that still has users in it, those users will be given a `NULL` role, which denies their App access
-and limits them to the [Public Role](/concepts/roles/#public-role) permissions. They can then be reassigned to a new
-role by an admin.
+and limits them to the [Public Role](/configuration/users-roles-permissions/#configuring-public-permissions)
+permissions. They can then be reassigned to a new role by an admin.
 
 :::
 
@@ -138,13 +140,16 @@ configuration field is disabled.
 
 :::
 
-1. Navigate to **Settings > Roles & Permissions > [Role Name]**
+1. Navigate to **Settings <span mi icon dark>chevron_right</span> Roles & Permissions
+   <span mi icon dark>chevron_right</span> [Role Name]**
 2. Scroll to the **Permissions** section
 3. **Click the icon** for the collection (row) and action (column) you want to set
-4. Choose the desired permission level: **All Access**, **No Access**, or **Use Custom**
+4. Choose the desired permission level: <span mi icon>check</span> **All Access**, <span mi icon>block</span> **No
+   Access**, or <span mi icon>rule</span> **Use Custom**
 
-**If you selected "All Access" or "No Access" then setup is complete.** If you chose to customize permissions then
-continue with the appropriate guide below based on the relevant _action_.
+**If you selected "<span mi icon>check</span> All Access" or "<span mi icon>block</span> No Access" then setup is
+complete.** If you chose to customize permissions then continue with the appropriate guide below based on the relevant
+_action_.
 
 ### Create (Custom Access)
 
@@ -177,7 +182,7 @@ App's soft-delete and manual sorting features.
 ### Delete (Custom Access)
 
 5. **Item Permissions** control which items can be deleted, as defined by the
-   [Filter Rules](/configuration/filter-rules/)) entered.
+   [Filter Rules](/configuration/filter-rules/) entered.
 
 ---
 
@@ -196,9 +201,9 @@ case-by-case basis by administrators.
 ### Configuring System Permissions
 
 In addition to permissions for _your_ custom collections, you can also customize the permissions for _system_
-collections. It is important to note that when [App Access](/guides/roles/#configuring-a-role) is enabled for a role,
-Directus will automatically add permission for the necessary system collections. To edit system permissions, simply
-click "System Collections" at the bottom of the permissions configuration.
+collections. It is important to note that when App Access is enabled for a role, Directus will automatically add
+permission for the necessary system collections. To edit system permissions, simply click "System Collections" at the
+bottom of the permissions configuration.
 
 There are two pre-configured options you can use for resetting the role's system permissions and ensure proper App
 access. To access these, click "System Collections" to expand, and then click one of the buttons at the bottom of the
