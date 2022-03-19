@@ -17,7 +17,7 @@ export default defineComponent({
 	setup(props, { emit }) {
 		const route = useRoute();
 
-		const mainElement = inject<Ref<Element>>('main-element');
+		const mainElement = inject<Ref<Element | undefined>>('main-element');
 
 		const pageClass = computed(() => props.frontmatter?.pageClass);
 
@@ -31,7 +31,7 @@ export default defineComponent({
 		);
 
 		onMounted(() => {
-			if (route.hash && mainElement) {
+			if (route.hash && mainElement?.value) {
 				const linkedEl = document.querySelector(route.hash) as HTMLElement;
 
 				if (linkedEl) {
@@ -215,8 +215,9 @@ export default defineComponent({
 	border-spacing: 0;
 }
 
-.md :deep(img) {
-	max-width: 100%;
+.md :deep(img),
+.md :deep(video) {
+	width: 100%;
 	margin: 20px 0;
 	border-radius: 6px;
 }
@@ -354,7 +355,7 @@ export default defineComponent({
 }
 
 .md :deep(img.shadow) {
-	box-shadow: 0px 5px 10px 0px rgba(23, 41, 64, 0.1), 0px 2px 40px 0px rgba(23, 41, 64, 0.05);
+	box-shadow: 0px 5px 10px 0px rgb(23 41 64 / 0.1), 0px 2px 40px 0px rgb(23 41 64 / 0.05);
 }
 
 .md.page-reference {

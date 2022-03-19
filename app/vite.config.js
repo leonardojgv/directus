@@ -100,8 +100,8 @@ export default defineConfig({
 
 					const titleLine = code.match(titleRegex);
 
-					const title = titleLine[1] ?? null;
-					const modularExtension = Boolean(titleLine[2]);
+					const title = titleLine?.[1] ?? null;
+					const modularExtension = Boolean(titleLine?.[2]);
 					const codeWithoutTitle = code.replace(titleRegex, '');
 
 					const newCode = `---\ntitle: "${title}"\nmodularExtension: ${modularExtension}${
@@ -178,7 +178,7 @@ function directusExtensions() {
 							...APP_SHARED_DEPS.reduce((acc, dep) => ({ ...acc, [dep.replace(/\//g, '_')]: dep }), {}),
 						},
 						output: {
-							entryFileNames: '[name].[hash].js',
+							entryFileNames: 'assets/[name].[hash].entry.js',
 						},
 						external: virtualIds,
 						preserveEntrySignatures: 'exports-only',

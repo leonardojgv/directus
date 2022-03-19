@@ -27,7 +27,7 @@
 							:items="fieldOptions"
 							:mandatory="false"
 							:groups-clickable="true"
-							@group-toggle="loadFieldRelations($event.value, 1)"
+							@group-toggle="loadFieldRelations($event.value)"
 							@update:modelValue="updateField(index, $event)"
 						>
 							<template #preview>{{ getFieldPreview(element) }}</template>
@@ -58,9 +58,19 @@
 						<v-icon name="drag_indicator" class="drag-handle" small />
 						<div class="logic-type" :class="{ or: filterInfo[index].name === '_or' }">
 							<span class="key" @click="toggleLogic(index)">
-								{{ filterInfo[index].name === '_and' ? t('interfaces.filter.all') : t('interfaces.filter.any') }}
+								{{
+									filterInfo[index].name === '_and'
+										? t('interfaces.filter.logic_type_and')
+										: t('interfaces.filter.logic_type_or')
+								}}
 							</span>
-							<span class="text">{{ t('interfaces.filter.of_the_following') }}</span>
+							<span class="text">
+								{{
+									`— ${filterInfo[index].name === '_and' ? t('interfaces.filter.all') : t('interfaces.filter.any')} ${t(
+										'interfaces.filter.of_the_following'
+									)}`
+								}}
+							</span>
 						</div>
 						<span class="delete">
 							<v-icon
@@ -257,6 +267,16 @@ export default defineComponent({
 				case '_nempty':
 					update(true);
 					break;
+				case '_intersects':
+				case '_nintersects':
+				case '_intersects_bbox':
+				case '_nintersects_bbox':
+					if (['_intersects', '_nintersects', '_intersects_bbox', '_nintersects_bbox'].includes(nodeInfo.comparator)) {
+						update(value);
+					} else {
+						update(null);
+					}
+					break;
 				default:
 					update(Array.isArray(value) ? value[0] : value);
 					break;
@@ -439,6 +459,17 @@ export default defineComponent({
 			left: unset;
 			background-color: var(--background-page);
 		}
+	}
+}
+
+.node {
+	&.logic {
+		padding-right: 4px;
+		white-space: nowrap;
+	}
+
+	&.field {
+		padding-right: 4px;
 	}
 }
 

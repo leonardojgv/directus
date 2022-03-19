@@ -11,8 +11,8 @@
 		<template #actions>
 			<v-dialog v-if="selection.length > 0" v-model="confirmDelete" @esc="confirmDelete = false">
 				<template #activator="{ on }">
-					<v-button v-tooltip.bottom="t('delete_label')" rounded icon class="action-delete" @click="on">
-						<v-icon name="delete" outline />
+					<v-button v-tooltip.bottom="t('delete_label')" rounded icon class="action-delete" secondary @click="on">
+						<v-icon name="delete" />
 					</v-button>
 				</template>
 
@@ -56,7 +56,7 @@
 				fixed-header
 				:items="presets"
 				:loading="loading"
-				show-select
+				show-select="multiple"
 				@click:row="onRowClick"
 			>
 				<template #[`item.scope`]="{ item }">
@@ -91,8 +91,8 @@ import SettingsNavigation from '../../../components/navigation.vue';
 
 import api from '@/api';
 import { Header } from '@/components/v-table/types';
-import { useCollectionsStore } from '@/stores/';
-import { getLayouts } from '@/layouts';
+import { useCollectionsStore, usePresetsStore } from '@/stores/';
+import { getLayout } from '@/layouts';
 import { useRouter } from 'vue-router';
 import ValueNull from '@/views/private/components/value-null';
 import PresetsInfoSidebarDetail from './components/presets-info-sidebar-detail.vue';
@@ -123,7 +123,6 @@ export default defineComponent({
 
 		const router = useRouter();
 
-		const { layouts } = getLayouts();
 		const collectionsStore = useCollectionsStore();
 
 		const selection = ref<Preset[]>([]);
@@ -132,6 +131,7 @@ export default defineComponent({
 		const { loading, presets, getPresets } = usePresets();
 		const { headers } = useTable();
 		const { confirmDelete, deleting, deleteSelection } = useDelete();
+		const presetsStore = usePresetsStore();
 
 		getPresets();
 
@@ -175,7 +175,7 @@ export default defineComponent({
 					}
 
 					const collection = collectionsStore.getCollection(preset.collection)?.name;
-					const layout = layouts.value.find((l) => l.id === preset.layout)?.name;
+					const layout = getLayout(preset.layout)?.name;
 
 					return {
 						id: preset.id,
@@ -252,7 +252,10 @@ export default defineComponent({
 			return { headers };
 		}
 
-		function onRowClick(item: Preset) {
+		function onRowClick({ item }: { item: Preset }) {
+			// This ensures that the type signature the item matches the ones in selection
+			item = ref(item).value;
+
 			if (selection.value.length === 0) {
 				router.push(`/settings/presets/${item.id}`);
 			} else {
@@ -275,7 +278,7 @@ export default defineComponent({
 
 				try {
 					const IDs = selection.value.map((item) => item.id);
-					await api.delete(`/presets`, { data: IDs });
+					await presetsStore.delete(IDs);
 					selection.value = [];
 					await getPresets();
 					confirmDelete.value = false;
@@ -290,15 +293,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .header-icon {
-	--v-button-color-disabled: var(--warning);
-	--v-button-background-color-disabled: var(--warning-10);
+	--v-button-color-disabled: var(--primary);
+	--v-button-background-color-disabled: var(--primary-10);
 }
 
 .action-delete {
-	--v-button-background-color: var(--danger-10);
-	--v-button-color: var(--danger);
-	--v-button-background-color-hover: var(--danger-25);
-	--v-button-color-hover: var(--danger);
+	--v-button-background-color-hover: var(--danger) !important;
+	--v-button-color-hover: var(--white) !important;
 }
 
 .presets-collection {

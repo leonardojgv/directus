@@ -1,5 +1,5 @@
 <template>
-	<v-list large>
+	<v-list nav>
 		<v-list-item v-for="item in navItems" :key="item.to" :to="item.to">
 			<v-list-item-icon><v-icon :name="item.icon" /></v-list-item-icon>
 			<v-list-item-content>
@@ -52,7 +52,6 @@ export default defineComponent({
 				icon: 'admin_panel_settings',
 				name: t('settings_permissions'),
 				to: `/settings/roles`,
-				outline: true,
 			},
 			{
 				icon: 'bookmark_border',
@@ -79,13 +78,11 @@ export default defineComponent({
 					icon: 'bug_report',
 					name: t('report_bug'),
 					href: `https://github.com/directus/directus/issues/new?${bugReportParams.toString()}`,
-					outline: true,
 				},
 				{
 					icon: 'new_releases',
 					name: t('request_feature'),
 					href: 'https://github.com/directus/directus/discussions/new',
-					outline: true,
 				},
 			];
 		});

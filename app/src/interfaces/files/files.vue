@@ -39,7 +39,23 @@
 							:template="templateWithDefaults"
 						/>
 						<div class="spacer" />
-						<v-icon v-if="!disabled" name="close" @click.stop="deleteItem(element)" />
+						<v-icon v-if="!disabled" name="close" class="remove" @click.stop="deleteItem(element)" />
+						<v-menu show-arrow placement="bottom-end">
+							<template #activator="{ toggle }">
+								<v-icon name="more_vert" clickable @click.stop="toggle" />
+							</template>
+
+							<v-list>
+								<v-list-item clickable :href="getUrl(element)">
+									<v-list-item-icon><v-icon name="launch" /></v-list-item-icon>
+									<v-list-item-content>{{ t('open_file_in_tab') }}</v-list-item-content>
+								</v-list-item>
+								<v-list-item clickable :href="getUrl(element, true)">
+									<v-list-item-icon><v-icon name="download" /></v-list-item-icon>
+									<v-list-item-content>{{ t('download_file') }}</v-list-item-content>
+								</v-list-item>
+							</v-list>
+						</v-menu>
 					</v-list-item>
 				</template>
 			</draggable>
@@ -82,7 +98,7 @@
 			v-if="!disabled"
 			v-model:active="selectModalActive"
 			:collection="relationCollection.collection"
-			:selection="[]"
+			:selection="selectedPrimaryKeys"
 			multiple
 			@input="stageSelection"
 		/>
@@ -90,7 +106,9 @@
 		<v-dialog v-if="!disabled" v-model="showUpload">
 			<v-card>
 				<v-card-title>{{ t('upload_file') }}</v-card-title>
-				<v-card-text><v-upload multiple from-url @input="onUpload" /></v-card-text>
+				<v-card-text>
+					<v-upload multiple from-url :folder="folder" @input="onUpload" />
+				</v-card-text>
 				<v-card-actions>
 					<v-button @click="showUpload = false">{{ t('done') }}</v-button>
 				</v-card-actions>
@@ -108,7 +126,7 @@ import { get } from 'lodash';
 import Draggable from 'vuedraggable';
 
 import useActions from '../list-m2m/use-actions';
-import useRelation from '../list-m2m/use-relation';
+import useRelation from '@/composables/use-m2m';
 import usePreview from '../list-m2m/use-preview';
 import useEdit from '../list-m2m/use-edit';
 import useSelection from '../list-m2m/use-selection';
@@ -154,6 +172,10 @@ export default defineComponent({
 			type: Boolean,
 			default: true,
 		},
+		folder: {
+			type: String,
+			default: undefined,
+		},
 	},
 	emits: ['input'],
 	setup(props, { emit }) {
@@ -196,7 +218,7 @@ export default defineComponent({
 			emitter
 		);
 
-		const { tableHeaders, items, loading } = usePreview(
+		const { tableHeaders, items, initialItems, loading } = usePreview(
 			value,
 			fields,
 			relationInfo,
@@ -209,7 +231,12 @@ export default defineComponent({
 		const { currentlyEditing, editItem, editsAtStart, stageEdits, cancelEdit, relatedPrimaryKey, editModalActive } =
 			useEdit(value, relationInfo, emitter);
 
-		const { stageSelection, selectModalActive } = useSelection(items, relationInfo, emitter);
+		const { stageSelection, selectModalActive, selectedPrimaryKeys } = useSelection(
+			items,
+			initialItems,
+			relationInfo,
+			emitter
+		);
 		const { sort, sortItems, sortedItems } = useSort(relationInfo, fields, items, emitter);
 
 		const { createAllowed, selectAllowed } = usePermissions(junctionCollection, relationCollection);
@@ -218,7 +245,7 @@ export default defineComponent({
 
 		const downloadUrl = computed(() => {
 			if (relatedPrimaryKey.value === null || relationCollection.value.collection !== 'directus_files') return;
-			return addTokenToURL(getRootPath() + `assets/${relatedPrimaryKey.value}`);
+			return addTokenToURL(getRootPath() + `assets/${relatedPrimaryKey.value}?download`);
 		});
 
 		return {
@@ -237,6 +264,7 @@ export default defineComponent({
 			stageSelection,
 			selectModalActive,
 			deleteItem,
+			selectedPrimaryKeys,
 			items,
 			relationInfo,
 			relatedPrimaryKey,
@@ -251,7 +279,21 @@ export default defineComponent({
 			onUpload,
 			showUpload,
 			downloadUrl,
+			getUrl,
 		};
+
+		function getUrl(junctionRow: Record<string, any>, addDownload?: boolean) {
+			const { junctionField } = relationInfo.value;
+			const key = junctionRow[junctionField]?.id ?? junctionRow[junctionField] ?? null;
+
+			if (!key) return null;
+
+			if (addDownload) {
+				return addTokenToURL(getRootPath() + `assets/${key}?download`);
+			}
+
+			return addTokenToURL(getRootPath() + `assets/${key}`);
+		}
 
 		function emitter(newVal: any[] | null) {
 			emit('input', newVal);
@@ -298,5 +340,9 @@ export default defineComponent({
 	&:hover {
 		--v-icon-color: var(--danger);
 	}
+}
+
+.remove {
+	margin-right: 4px;
 }
 </style>

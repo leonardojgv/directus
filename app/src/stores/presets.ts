@@ -30,7 +30,7 @@ const systemDefaults: Record<string, Partial<Preset>> = {
 			cards: {
 				icon: 'insert_drive_file',
 				title: '{{ title }}',
-				subtitle: '{{ type }} • {{ filesize }}',
+				subtitle: '{{ type }} • {{ filesize }}',
 				size: 4,
 				imageFit: 'crop',
 			},
@@ -91,6 +91,26 @@ const systemDefaults: Record<string, Partial<Preset>> = {
 			},
 		},
 	},
+	directus_webhooks: {
+		collection: 'directus_webhooks',
+		layout: 'tabular',
+		layout_query: {
+			tabular: {
+				fields: ['status', 'method', 'name', 'collections', 'actions'],
+			},
+		},
+		layout_options: {
+			tabular: {
+				widths: {
+					status: 32,
+					method: 100,
+					name: 210,
+					collections: 240,
+					actions: 210,
+				},
+			},
+		},
+	},
 };
 
 const currentUpdate: Record<number, string> = {};
@@ -100,10 +120,18 @@ export const usePresetsStore = defineStore({
 	state: () => ({
 		collectionPresets: [] as Preset[],
 	}),
+	getters: {
+		bookmarks(): Preset[] {
+			return this.collectionPresets.filter((preset) => preset.bookmark !== null);
+		},
+	},
 	actions: {
 		async hydrate() {
+			const userStore = useUserStore();
+			if (!userStore.currentUser || 'share' in userStore.currentUser) return;
+
 			// Hydrate is only called for logged in users, therefore, currentUser exists
-			const { id, role } = useUserStore().currentUser!;
+			const { id, role } = userStore.currentUser;
 
 			const values = await Promise.all([
 				// All user saved bookmarks and presets
@@ -176,11 +204,11 @@ export const usePresetsStore = defineStore({
 
 			return response.data.data;
 		},
-		async delete(id: number) {
-			await api.delete(`/presets/${id}`);
+		async delete(ids: number[]) {
+			await api.delete('/presets', { data: ids });
 
 			this.collectionPresets = this.collectionPresets.filter((preset) => {
-				return preset.id !== id;
+				return !ids.includes(preset.id!);
 			});
 		},
 
@@ -242,7 +270,7 @@ export const usePresetsStore = defineStore({
 		 * the user. If the preset already exists and is for a user, we update the preset.
 		 * The response gets added to the store.
 		 */
-		async savePreset(preset: Preset) {
+		async savePreset(preset: Partial<Preset>) {
 			const userStore = useUserStore();
 			if (userStore.currentUser === null) return null;
 			const { id: userID } = userStore.currentUser;

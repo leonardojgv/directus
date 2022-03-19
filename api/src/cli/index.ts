@@ -1,6 +1,6 @@
 import { Command, Option } from 'commander';
 import { startServer } from '../server';
-import { emitAsyncSafe } from '../emitter';
+import emitter from '../emitter';
 import { getExtensionManager } from '../extensions';
 import bootstrap from './commands/bootstrap';
 import count from './commands/count';
@@ -20,9 +20,9 @@ export async function createCli(): Promise<Command> {
 
 	const extensionManager = getExtensionManager();
 
-	await extensionManager.initialize({ schedule: false });
+	await extensionManager.initialize({ schedule: false, watch: false });
 
-	await emitAsyncSafe('cli.init.before', { program });
+	await emitter.emitInit('cli.before', { program });
 
 	program.name('directus').usage('[command] [options]');
 	program.version(pkg.version, '-v, --version');
@@ -92,10 +92,11 @@ export async function createCli(): Promise<Command> {
 		.command('apply')
 		.description('Apply a snapshot file to the current database')
 		.option('-y, --yes', `Assume "yes" as answer to all prompts and run non-interactively`)
+		.option('-d, --dry-run', 'Plan and log changes to be applied', false)
 		.argument('<path>', 'Path to snapshot file')
 		.action(apply);
 
-	await emitAsyncSafe('cli.init.after', { program });
+	await emitter.emitInit('cli.after', { program });
 
 	return program;
 }

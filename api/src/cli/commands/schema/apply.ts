@@ -11,7 +11,7 @@ import { getSnapshotDiff } from '../../../utils/get-snapshot-diff';
 import { applySnapshot } from '../../../utils/apply-snapshot';
 import { flushCaches } from '../../../cache';
 
-export async function apply(snapshotPath: string, options?: { yes: boolean }): Promise<void> {
+export async function apply(snapshotPath: string, options?: { yes: boolean; dryRun: boolean }): Promise<void> {
 	const filename = path.resolve(process.cwd(), snapshotPath);
 
 	const database = getDatabase();
@@ -50,7 +50,9 @@ export async function apply(snapshotPath: string, options?: { yes: boolean }): P
 			process.exit(0);
 		}
 
-		if (options?.yes !== true) {
+		const dryRun = options?.dryRun === true;
+		const promptForChanges = !dryRun && options?.yes !== true;
+		if (dryRun || promptForChanges) {
 			let message = '';
 
 			if (snapshotDiff.collections.length > 0) {
@@ -70,6 +72,8 @@ export async function apply(snapshotPath: string, options?: { yes: boolean }): P
 						message += `\n  - ${chalk.red('Delete')} ${collection}`;
 					} else if (diff[0]?.kind === 'N') {
 						message += `\n  - ${chalk.green('Create')} ${collection}`;
+					} else if (diff[0]?.kind === 'A') {
+						message += `\n  - ${chalk.blue('Update')} ${collection}`;
 					}
 				}
 			}
@@ -91,6 +95,8 @@ export async function apply(snapshotPath: string, options?: { yes: boolean }): P
 						message += `\n  - ${chalk.red('Delete')} ${collection}.${field}`;
 					} else if (diff[0]?.kind === 'N') {
 						message += `\n  - ${chalk.green('Create')} ${collection}.${field}`;
+					} else if (diff[0]?.kind === 'A') {
+						message += `\n  - ${chalk.blue('Update')} ${collection}.${field}`;
 					}
 				}
 			}
@@ -100,7 +106,7 @@ export async function apply(snapshotPath: string, options?: { yes: boolean }): P
 
 				for (const { collection, field, related_collection, diff } of snapshotDiff.relations) {
 					if (diff[0]?.kind === 'E') {
-						message += `\n  - ${chalk.blue('Update')} ${collection}.${field} -> ${related_collection}`;
+						message += `\n  - ${chalk.blue('Update')} ${collection}.${field}`;
 
 						for (const change of diff) {
 							if (change.kind === 'E') {
@@ -109,22 +115,33 @@ export async function apply(snapshotPath: string, options?: { yes: boolean }): P
 							}
 						}
 					} else if (diff[0]?.kind === 'D') {
-						message += `\n  - ${chalk.red('Delete')} ${collection}.${field} -> ${related_collection}`;
+						message += `\n  - ${chalk.red('Delete')} ${collection}.${field}`;
 					} else if (diff[0]?.kind === 'N') {
-						message += `\n  - ${chalk.green('Create')} ${collection}.${field} -> ${related_collection}`;
+						message += `\n  - ${chalk.green('Create')} ${collection}.${field}`;
+					} else if (diff[0]?.kind === 'A') {
+						message += `\n  - ${chalk.blue('Update')} ${collection}.${field}`;
+					} else {
+						continue;
+					}
+
+					// Related collection doesn't exist for a2o relationship types
+					if (related_collection) {
+						message += `-> ${related_collection}`;
 					}
 				}
+			}
+
+			message += 'The following changes will be applied:\n\n' + chalk.black(message);
+			if (dryRun) {
+				logger.info(message);
+				process.exit(0);
 			}
 
 			const { proceed } = await inquirer.prompt([
 				{
 					type: 'confirm',
 					name: 'proceed',
-					message:
-						'The following changes will be applied:\n\n' +
-						chalk.black(message) +
-						'\n\n' +
-						'Would you like to continue?',
+					message: message + '\n\n' + 'Would you like to continue?',
 				},
 			]);
 
