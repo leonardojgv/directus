@@ -13,7 +13,7 @@
 				<template #prepend>
 					<v-input
 						ref="htmlColorInput"
-						:model-value="hex ? hex.substr(0, 7) : null"
+						:model-value="hex ? hex.slice(0, 7) : null"
 						type="color"
 						class="html-color-select"
 						@update:model-value="setSwatchValue($event)"
@@ -182,39 +182,39 @@ const props = withDefaults(defineProps<Props>(), {
 	opacity: false,
 	presets: () => [
 		{
-			name: i18n.global.t('purple'),
+			name: i18n.global.t('colors.purple'),
 			color: '#6644FF',
 		},
 		{
-			name: i18n.global.t('blue'),
+			name: i18n.global.t('colors.blue'),
 			color: '#3399FF',
 		},
 		{
-			name: i18n.global.t('green'),
+			name: i18n.global.t('colors.green'),
 			color: '#2ECDA7',
 		},
 		{
-			name: i18n.global.t('yellow'),
+			name: i18n.global.t('colors.yellow'),
 			color: '#FFC23B',
 		},
 		{
-			name: i18n.global.t('orange'),
+			name: i18n.global.t('colors.orange'),
 			color: '#FFA439',
 		},
 		{
-			name: i18n.global.t('red'),
+			name: i18n.global.t('colors.red'),
 			color: '#E35169',
 		},
 		{
-			name: i18n.global.t('black'),
+			name: i18n.global.t('colors.black'),
 			color: '#18222F',
 		},
 		{
-			name: i18n.global.t('gray'),
+			name: i18n.global.t('colors.gray'),
 			color: '#A2B5CD',
 		},
 		{
-			name: i18n.global.t('white'),
+			name: i18n.global.t('colors.white'),
 			color: '#FFFFFF',
 		},
 	],
@@ -266,7 +266,7 @@ function setValue(type: 'rgb' | 'hsl' | 'alpha', i: number, val: number) {
 }
 
 function setSwatchValue(color: string) {
-	hex.value = `${color}${hex.value !== null && hex.value.length === 9 ? hex.value.substr(-2) : ''}`;
+	hex.value = `${color}${hex.value !== null && hex.value.length === 9 ? hex.value.slice(-2) : ''}`;
 }
 
 function unsetColor() {
